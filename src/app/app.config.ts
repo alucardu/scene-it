@@ -9,12 +9,14 @@ import { provideRouter } from '@angular/router';
 import { firebaseConfig } from '../env/dev.env';
 import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
     provideRouter(routes),
     provideAnimations(),
+    provideHttpClient(),
 
     // firebase
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
