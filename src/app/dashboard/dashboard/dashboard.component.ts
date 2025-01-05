@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { getAuth, signOut } from 'firebase/auth';
+import { Component, computed, inject } from '@angular/core';
+import { UserService } from '../../shared/service/user.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,15 +10,12 @@ import { getAuth, signOut } from 'firebase/auth';
   imports: []
 })
 export class DashboardComponent {
-  private router = inject(Router);
-  private auth = getAuth();
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
+
+  user = computed(() => this.userService.userResource.value());
 
   signOut(): void {
-    signOut(this.auth).then(() => {
-      this.router.navigate(['/auth/sign-in']);
-      // Sign-out successful.
-    }).catch((error) => {
-      // An error happened.
-    });
+    this.authService.signOut();
   }
 }

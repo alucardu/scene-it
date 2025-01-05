@@ -1,15 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, ReactiveFormsModule, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { AbstractControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-} from '@angular/fire/auth';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -19,8 +15,8 @@ import { RouterModule } from '@angular/router';
   imports: [ReactiveFormsModule, MatCardModule, MatInputModule, MatButtonModule, RouterModule],
 })
 export class SignUpComponent  {
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
-  private auth = getAuth();
 
   signUpForm: FormGroup;
 
@@ -43,10 +39,6 @@ export class SignUpComponent  {
   onSubmit(): void {
     if (this.signUpForm.invalid) return;
 
-    createUserWithEmailAndPassword(
-      this.auth,
-      this.signUpForm.controls['email'].value,
-      this.signUpForm.controls['password'].value
-    );
+    this.authService.createUserWithEmailAndPassword(this.signUpForm);
   }
 }
