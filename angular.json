@@ -30,10 +30,10 @@
             ],
             "scripts": [],
             "server": "src/main.server.ts",
-            "prerender": true,
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "outputMode": "server"
           },
           "configurations": {
             "production": {
@@ -96,6 +96,6 @@
     }
   },
   "cli": {
-    "analytics": "6d0af6ad-c68d-43b4-80e7-3816b95c73dd"
+    "analytics": "d309c76d-c252-4a77-ad5b-a21fe82bc179"
   }
 }
