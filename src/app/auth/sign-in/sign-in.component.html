@@ -1,0 +1,31 @@
+<div class="container">
+  <mat-card>
+    <mat-card-content>
+        <mat-card-header>
+          <mat-card-title>Sign In</mat-card-title>
+        </mat-card-header>
+        <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" required>
+            @if(signInForm.controls['email'].hasError('email')) {
+              <mat-error>Email address is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" type="password" required>
+            @if(signInForm.controls['password'].hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-card-actions>
+            <button mat-raised-button color="primary" type="submit">Sign In</button>
+            <button mat-raised-button color="tertiary" [routerLink]="'/auth/sign-up'" type="button">Sign Up</button>
+          </mat-card-actions>
+        </form>
+    </mat-card-content>
+  </mat-card>
+</div>
