@@ -1,5 +1,7 @@
-<p>
-  <button (click)="signOut()">Sign out</button><br>
-  {{ user()?.username}}
-</p>
+  @if(user.value(); as user) {
+    <button (click)="signOut()">Sign out</button><br>
+    {{ user.username }}
+
+    <app-session-list/>
+  }
 

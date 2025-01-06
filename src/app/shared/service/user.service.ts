@@ -8,14 +8,13 @@ import { User } from '../types/user.types';
   providedIn: 'root'
 })
 export class UserService {
-  private auth = getAuth();
-  private currentUser = this.auth.currentUser;
+  private currentUser = getAuth().currentUser;
 
-  userResource = resource<User, unknown>({
+  userResource = resource({
     loader: async () => {
       const response = await fetch(firestoreUrl + `users/${this.currentUser?.uid}`);
       const data = await response.json();
-      return mapFirestoreFields(data.fields);
+      return mapFirestoreFields(data.fields) as User;
     }
-  })
+  });
 }

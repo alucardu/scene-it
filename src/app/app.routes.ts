@@ -1,22 +1,12 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './auth/auth.route-guard';
-import { DashboardGuard } from './dashboard/dashboard/dashboard.route-guard';
+import { AUTH_ROUTES } from './auth/auth.routes';
+import { SESSION_ROUTES } from './session/session.routes';
+import { DASHBOARD_ROUTES } from './dashboard/dashboard.routes';
 
 export const routes: Routes = [
-  {
-    path: 'auth/sign-in',
-    loadComponent: () => import('./auth/sign-in/sign-in.component').then(m => m.SignInComponent),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'auth/sign-up',
-    loadComponent: () => import('./auth/sign-up/sign-up.component').then(m => m.SignUpComponent),
-  },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
-    canActivate: [DashboardGuard]
-  },
+  { path: 'auth', children: AUTH_ROUTES },
+  { path: 'dashboard', children: DASHBOARD_ROUTES },
+  { path: 'session', children: SESSION_ROUTES },
   {
     path: '*',
     redirectTo: 'auth/sign-in',

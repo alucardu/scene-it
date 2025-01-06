@@ -1,0 +1,16 @@
+@if(session.hasValue()) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Players</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        @for (user of sessionUsers.value(); track $index) {
+          <mat-list-item>
+            {{ user.username }}
+          </mat-list-item>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+}
