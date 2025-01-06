@@ -11,7 +11,6 @@ import { AuthService } from '../auth.service';
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css'],
-  standalone: true,
   imports: [ReactiveFormsModule, MatCardModule, MatInputModule, MatButtonModule, RouterModule],
 })
 export class SignUpComponent  {

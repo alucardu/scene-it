@@ -27,9 +27,10 @@ export class AuthService {
     const user = userCredential.user;
       this.http.post(firestoreUrl + `users?documentId=${user.uid}`, {
         fields: {
-          email: { stringValue: user.email },
-          username: { stringValue: signUpForm.controls['username'].value },
           createdAt: { timestampValue:  new Date().toISOString() },
+          email: { stringValue: user.email },
+          uid: { stringValue: user.uid },
+          username: { stringValue: signUpForm.controls['username'].value },
         }
       }).subscribe(() => {
         this.router.navigate(['/dashboard']);
