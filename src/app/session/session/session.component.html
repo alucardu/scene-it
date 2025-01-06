@@ -4,6 +4,7 @@
       <mat-card-title>Players</mat-card-title>
     </mat-card-header>
     <mat-card-content>
+      <span>{{ session.value()?.movie_title }}</span>
       <mat-list>
         @for (user of sessionUsers.value(); track $index) {
           <mat-list-item>

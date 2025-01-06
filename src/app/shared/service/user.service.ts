@@ -12,7 +12,7 @@ export class UserService {
 
   userResource = resource({
     loader: async () => {
-      const response = await fetch(firestoreUrl + `users/${this.currentUser?.uid}`);
+      const response = await fetch(firestoreUrl + `/users/${this.currentUser?.uid}`);
       const data = await response.json();
       return mapFirestoreFields(data.fields) as User;
     }

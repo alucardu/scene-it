@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { SessionService } from '../session.service';
 import { UserService } from '../../shared/service/user.service';
+import { MoviesService } from '../../movies/movies.service';
 
 @Component({
   selector: 'app-new-session',
@@ -14,6 +15,7 @@ import { UserService } from '../../shared/service/user.service';
 export class NewSessionComponent {
   private sessionService = inject(SessionService);
   private userService = inject(UserService);
+  private movieService = inject(MoviesService)
 
   sessions = this.sessionService.sessionsResource;
   user = this.userService.userResource;
