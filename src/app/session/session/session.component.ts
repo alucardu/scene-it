@@ -11,12 +11,12 @@ import { MatListModule } from '@angular/material/list';
 })
 export class SessionComponent implements OnInit {
   private sessionService = inject(SessionService);
-  @Input() uid = '';
+  @Input() uid!: string;
 
   ngOnInit() {
     this.sessionService.getCurrentSession.set(this.uid);
   }
 
   session = this.sessionService.sessionResource;
-  sessionUsers = this.sessionService.sessionUsersResource
+  sessionUsers = this.sessionService.sessionUsersResource;
 }

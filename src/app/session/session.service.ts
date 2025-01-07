@@ -1,55 +1,48 @@
-import { Injectable, resource, signal } from '@angular/core';
-import { firestoreUrl } from '../../env/dev.env';
-import { extractAndFlattenFields } from '../shared/util/utils';
+import { inject, Injectable, resource, signal } from '@angular/core';
 import { Session } from '../shared/types/session.types';
 import { nanoid } from 'nanoid';
-import { User } from '../shared/types/user.types';
 import { Movie } from '../shared/types/movie.types';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { collection, collectionData, deleteDoc, doc, docData, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
+import { User } from '../shared/types/user.types';
+import { updateDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
+  private firestore = inject(Firestore)
   private sessionUid = signal<string | null>(null);
 
-  sessionsResource = resource({
-    loader: async () => {
-      const response = await fetch(`${firestoreUrl}/sessions`);
-      const data = await response.json();
-      return extractAndFlattenFields(data.documents) as Session[];
+  sessionsResource = rxResource({
+    loader: () => {
+      const sessions = collection(this.firestore, 'sessions');
+      return collectionData(sessions) as Observable<Session[]>
     }
   });
 
   getCurrentSession = signal<string | null>(null)
-  sessionResource = resource({
+  sessionResource = rxResource({
     request: () => this.getCurrentSession(),
-    loader: async ({request}) => {
-      if(!request) return null;
-
-      const response = await fetch(`${firestoreUrl}/sessions/${request}`);
-      const data = await response.json();
-      const session = extractAndFlattenFields(data) as Session
-      return session;
+    loader: ({request}) => {
+      if(!request) return of(null);
+      
+      const session = doc(this.firestore, `sessions/${request}`);
+      return docData(session) as Observable<Session>;
     }
   });
 
   // Uses the sessionResource to request players
   sessionUsersResource = resource({
-    request: () => this.sessionResource.value()?.users,
+    request: () => this.sessionResource.value(),
     loader: async ({request}) => {
-      const query = { structuredQuery: {
-        from: [{ collectionId: 'users' }],
-        where: { fieldFilter: {field: { fieldPath: 'uid' }, op: 'IN', value: { arrayValue: { values: request?.map(uid => ({ stringValue: uid }))}}}}
-      }};
-
-      const response = await fetch(`${firestoreUrl}:runQuery`, {
-        method: 'POST',
-        body: JSON.stringify(query),
-      });
-
-      const data = await response.json();
-      const users = data.map((doc: any) => doc.document)
-      return extractAndFlattenFields(users) as User[]
+      const userDocsSnap = await getDocs(query(collection(this.firestore, 'users'), where('uid', 'in', request?.users)));
+      
+      return userDocsSnap.docs.map((doc) => ({
+        ...doc.data(),
+        createdAt: new Date(doc.data().createdAt.seconds * 1000).toString(),
+      })) as User[];
     }
   });
 
@@ -59,22 +52,14 @@ export class SessionService {
     loader: async ({request}) => {
       if(request) {
         this.sessionUid.set(nanoid());
-
-        const query = {
-          fields: {
-            uid: { stringValue: this.sessionUid() },
-            users: { arrayValue: { values: [ { stringValue: request.users[0] }]}},
-            movie_title: { stringValue: 'asd' },
-          }
+        const query: Session = {
+          uid: this.sessionUid()!,
+          movie_title: '',
+          users: [request.users[0]]
         };
 
-        const response = await fetch(`${firestoreUrl}/sessions/${this.sessionUid()}`, {
-          method: 'PATCH',
-          body: JSON.stringify(query)
-        });
-
-        this.sessionsResource.reload();
-        return await response.json();
+        const sessionCollectionRef = collection(this.firestore, 'sessions');
+        return setDoc(doc(sessionCollectionRef, this.sessionUid()!), query).then(() => this.sessionsResource.reload());
       }
       return null;
     }
@@ -85,22 +70,14 @@ export class SessionService {
     request: () => this.randomMovie(),
     loader: async ({request}) => {
       if(request) {
-        const query = {
-          fields: {
-            movie_title: { stringValue: request.title }
-          }
-        }
-        await fetch(`${firestoreUrl}/sessions/${this.sessionUid()}/?updateMask.fieldPaths=movie_title`, {
-          method: 'PATCH',
-          body: JSON.stringify(query)
-        });
+        const sessionDocRef = doc(collection(this.firestore, 'sessions'), this.sessionUid()!)
+        await updateDoc(sessionDocRef, { movie_title: request.title });
       }
     }
   });
 
   async deleteSesion(uid: string): Promise<void> {
-    const response = await fetch(`${firestoreUrl}/sessions/${uid}`, {
-      method: 'DELETE',
-    }).then(() => this.sessionsResource.reload());
+    const session = doc(this.firestore, `sessions/${uid}`);
+    deleteDoc(session).then(() => this.sessionsResource.reload())
   }
 }

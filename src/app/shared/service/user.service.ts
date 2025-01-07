@@ -1,20 +1,18 @@
-import { Injectable, resource } from '@angular/core';
-import { firestoreUrl } from '../../../env/dev.env';
+import { inject, Injectable, resource } from '@angular/core';
 import { getAuth } from 'firebase/auth';
-import { mapFirestoreFields } from '../util/utils';
 import { User } from '../types/user.types';
+import { collection, doc, Firestore, getDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  private firestore = inject(Firestore)
   private currentUser = getAuth().currentUser;
 
   userResource = resource({
     loader: async () => {
-      const response = await fetch(`${firestoreUrl}/users/${this.currentUser?.uid}`);
-      const data = await response.json();
-      return mapFirestoreFields(data.fields) as User;
+      return (await getDoc(doc(collection(this.firestore, 'users'), this.currentUser?.uid))).data() as User;
     }
   });
 }

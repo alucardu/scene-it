@@ -3,11 +3,13 @@ import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, si
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firestoreUrl } from '../../env/dev.env';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private firestore = inject(Firestore);
   private router = inject(Router);
   private auth = getAuth();
 
@@ -24,19 +26,15 @@ export class AuthService {
   private async createUserDocument(userCredential: UserCredential, signUpForm: FormGroup): Promise<void> {
     const user = userCredential.user;
     const query = {
-      fields: {
-        createdAt: { timestampValue:  new Date().toISOString() },
-        email: { stringValue: user.email },
-        uid: { stringValue: user.uid },
-        username: { stringValue: signUpForm.controls['username'].value },
-        role: { stringValue: 'user' },
-      }
+      createdAt: new Date().toISOString(),
+      email: user.email,
+      uid: user.uid,
+      username: signUpForm.controls['username'].value,
+      role: 'user',
     }
 
-    await fetch(`${firestoreUrl}/users?documentId=${user.uid}`, {
-      method: 'POST',
-      body: JSON.stringify(query),
-    }).then(() => this.router.navigate(['/dashboard']));
+    const userDocRef = doc(this.firestore, `users/${user.uid}`);
+    await setDoc(userDocRef, query).then(() => this.router.navigate(['/dashboard']));
   }
 
   signInWithEmailAndPassword (signInForm: FormGroup): void {
