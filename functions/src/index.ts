@@ -27,7 +27,10 @@ const options = {
 };
 
 export const getRandomMovie = onRequest(
-  {cors: true}, async (request, response) => {
+  {
+    secrets: ["BEARER_TOKEN"],
+    cors: true,
+  }, async (request, response) => {
     const config: Config = JSON.parse(request.body);
     const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&release_date.gte=${config.release_date_start}&release_date.lte=${config.release_date_end}}&sort_by=vote_count.desc&vote_count.gte=2500`;
 
