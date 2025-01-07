@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
+import { UserService } from '../../shared/service/user.service';
 
 @Component({
   selector: 'app-session-list',
@@ -15,6 +16,12 @@ import { RouterLink } from '@angular/router';
 
 export class SessionListComponent {
   private sessionService = inject(SessionService);
+  private userService = inject(UserService);
 
   sessions = this.sessionService.sessionsResource;
+  user = this.userService.userResource;
+
+  deleteSession(uid: string): void {
+    this.sessionService.deleteSesion(uid);
+  }
 }

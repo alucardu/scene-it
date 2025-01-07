@@ -14,7 +14,7 @@ export class SessionService {
 
   sessionsResource = resource({
     loader: async () => {
-      const response = await fetch(firestoreUrl + `/sessions`);
+      const response = await fetch(`${firestoreUrl}/sessions`);
       const data = await response.json();
       return extractAndFlattenFields(data.documents) as Session[];
     }
@@ -26,7 +26,7 @@ export class SessionService {
     loader: async ({request}) => {
       if(!request) return null;
 
-      const response = await fetch(firestoreUrl + `/sessions/${request}`);
+      const response = await fetch(`${firestoreUrl}/sessions/${request}`);
       const data = await response.json();
       const session = extractAndFlattenFields(data) as Session
       return session;
@@ -96,5 +96,11 @@ export class SessionService {
         });
       }
     }
-  })
+  });
+
+  async deleteSesion(uid: string): Promise<void> {
+    const response = await fetch(`${firestoreUrl}/sessions/${uid}`, {
+      method: 'DELETE',
+    }).then(() => this.sessionsResource.reload());
+  }
 }

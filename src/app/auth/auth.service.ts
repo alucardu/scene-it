@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, UserCredential } from '@angular/fire/auth';
 import { FormGroup } from '@angular/forms';
@@ -10,7 +9,6 @@ import { firestoreUrl } from '../../env/dev.env';
 })
 export class AuthService {
   private router = inject(Router);
-  private http = inject(HttpClient);
   private auth = getAuth();
 
   createUserWithEmailAndPassword(signUpForm: FormGroup): void {
@@ -23,18 +21,22 @@ export class AuthService {
     });
   }
 
-  private createUserDocument(userCredential: UserCredential, signUpForm: FormGroup): void {
+  private async createUserDocument(userCredential: UserCredential, signUpForm: FormGroup): Promise<void> {
     const user = userCredential.user;
-      this.http.post(firestoreUrl + `users?documentId=${user.uid}`, {
-        fields: {
-          createdAt: { timestampValue:  new Date().toISOString() },
-          email: { stringValue: user.email },
-          uid: { stringValue: user.uid },
-          username: { stringValue: signUpForm.controls['username'].value },
-        }
-      }).subscribe(() => {
-        this.router.navigate(['/dashboard']);
-      });
+    const query = {
+      fields: {
+        createdAt: { timestampValue:  new Date().toISOString() },
+        email: { stringValue: user.email },
+        uid: { stringValue: user.uid },
+        username: { stringValue: signUpForm.controls['username'].value },
+        role: { stringValue: 'user' },
+      }
+    }
+
+    await fetch(`${firestoreUrl}/users?documentId=${user.uid}`, {
+      method: 'POST',
+      body: JSON.stringify(query),
+    }).then(() => this.router.navigate(['/dashboard']));
   }
 
   signInWithEmailAndPassword (signInForm: FormGroup): void {
