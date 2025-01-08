@@ -1,9 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, UserCredential } from '@angular/fire/auth';
+import { inject, Injectable, signal } from '@angular/core';
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, UserCredential } from '@angular/fire/auth';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { firestoreUrl } from '../../env/dev.env';
-import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { doc, Firestore, getDoc, setDoc } from '@angular/fire/firestore';
+import { User } from '../shared/types/user.types';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,7 @@ export class AuthService {
   private firestore = inject(Firestore);
   private router = inject(Router);
   private auth = getAuth();
+  readonly currentUser = signal<User | null>(null)
 
   createUserWithEmailAndPassword(signUpForm: FormGroup): void {
     createUserWithEmailAndPassword(
@@ -41,6 +42,25 @@ export class AuthService {
     signInWithEmailAndPassword(this.auth, signInForm.controls['email'].value, signInForm.controls['password'].value).then(() => {
       this.router.navigate(['/dashboard']);
     })
+  }
+
+  async initializeAuth(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      onAuthStateChanged(this.auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          try {
+            const userDoc = await getDoc(doc(this.firestore, 'users', firebaseUser.uid));
+            this.currentUser.set(userDoc.data() as User);
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+            reject(error);
+          }
+        } else {
+          this.currentUser.set(null);
+        }
+        resolve();
+      });
+    });
   }
 
   signOut(): void {

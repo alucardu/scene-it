@@ -6,11 +6,11 @@
         <mat-card-subtitle>Spooky times</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>Number of players: {{ session.users.length }}</p>
+        <p>Number of players: {{ session.users.length }} / {{ session.pending_invites.length + session.users.length }}</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-button [routerLink]="['/session/' + session.uid]">Check</button>
-        @if(user.value()?.role === 'admin') {
+        @if(user()?.role === 'admin') {
           <button mat-button (click)="deleteSession(session.uid!)">Delete</button>
         }
       </mat-card-actions>
@@ -18,4 +18,4 @@
   }
 </div>
 
-<app-new-session/>
+ <button mat-button [routerLink]="'/session/new-session'">Create session</button>

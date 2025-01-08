@@ -1,25 +1,36 @@
-import { inject, Injectable, resource, signal } from '@angular/core';
+import { effect, inject, Injectable, resource, signal } from '@angular/core';
 import { Session } from '../shared/types/session.types';
 import { nanoid } from 'nanoid';
 import { Movie } from '../shared/types/movie.types';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { collection, deleteDoc, doc, docData, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { collection, deleteDoc, doc, docData, Firestore, getDocs, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { User } from '../shared/types/user.types';
-import { updateDoc } from 'firebase/firestore';
-import { UserService } from '../shared/service/user.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
-  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   private firestore = inject(Firestore)
   private sessionUid = signal<string | null>(null);
+  private sessionCreated = signal(false);
+
+  constructor() {
+    effect(() => {
+      if(this.sessionCreated()) {
+        this.router.navigate([`session/${this.sessionUid()}`]);
+        this.sessionCreated.set(false);
+      }
+    })
+  }
 
   sessionsResource = resource({
     loader: async () => {
-      const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'sessions'), where('users', 'array-contains', this.userService.userResource.value()?.uid)))
+      const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'sessions'), where('users', 'array-contains', this.authService.currentUser()?.uid)))
       return sessionDocsSnap.docs.map((doc) => doc.data());
     }
   });
@@ -35,7 +46,6 @@ export class SessionService {
     }
   });
 
-  // Uses the sessionResource to request players
   sessionUsersResource = resource({
     request: () => this.sessionResource.value(),
     loader: async ({request}) => {
@@ -43,7 +53,6 @@ export class SessionService {
 
       return userDocsSnap.docs.map((doc) => ({
         ...doc.data(),
-        createdAt: new Date(doc.data().createdAt.seconds * 1000).toString(),
       })) as User[];
     }
   });
@@ -58,6 +67,7 @@ export class SessionService {
           uid: this.sessionUid()!,
           movie_title: '',
           users: [request.users[0]],
+          pending_invites: [...request.pending_invites],
           host_id: request.users[0]
         };
 
@@ -74,7 +84,7 @@ export class SessionService {
     loader: async ({request}) => {
       if(request) {
         const sessionDocRef = doc(collection(this.firestore, 'sessions'), this.sessionUid()!)
-        await updateDoc(sessionDocRef, { movie_title: request.title });
+        updateDoc(sessionDocRef, { movie_title: request.title }).then(() => this.sessionCreated.set(true));
       }
     }
   });

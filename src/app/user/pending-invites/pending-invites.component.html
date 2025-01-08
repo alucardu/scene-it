@@ -1,0 +1,16 @@
+@if (currentUserPendingInvitesResource.hasValue()) {
+  @for (pendingInvite of currentUserPendingInvitesResource.value(); track $index) {
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Pending Invites</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <span>
+          <a href="#" [routerLink]="['/session/' + pendingInvite.uid]"> {{ pendingInvite.uid }}</a>
+          <button mat-button (click)="acceptInvite(pendingInvite.uid!)">accept</button>
+          <button mat-button (click)="declineInvite(pendingInvite.uid!)">decline</button>
+        </span>
+      </mat-card-content>
+    </mat-card>
+  }
+}

@@ -1,6 +1,6 @@
 import { ApplicationConfig, inject, provideAppInitializer, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { Auth, getAuth, provideAuth as provideFireAuth } from '@angular/fire/auth';
+import { getAuth, provideAuth as provideFireAuth } from '@angular/fire/auth';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
@@ -10,6 +10,7 @@ import { firebaseConfig } from '../env/dev.env';
 import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { AuthService } from './auth/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,6 @@ export const appConfig: ApplicationConfig = {
     provideDatabase(() => getDatabase()),
     provideStorage(() => getStorage()),
     provideFunctions(() => getFunctions()),
-    provideAppInitializer(() => { const auth = inject(Auth) }),
+    provideAppInitializer(() => inject(AuthService).initializeAuth()),
   ],
 };
