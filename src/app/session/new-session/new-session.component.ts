@@ -21,6 +21,6 @@ export class NewSessionComponent {
   user = this.userService.userResource;
 
   createNewSession(): void {
-    this.sessionService.createNewSession.set({users: [this.user.value()!.uid]});
+    this.sessionService.createNewSession.set({users: [this.user.value()!.uid], host_id: this.user.value()!.uid});
   }
 }

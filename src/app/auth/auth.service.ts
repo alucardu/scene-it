@@ -46,6 +46,7 @@ export class AuthService {
   signOut(): void {
     signOut(this.auth).then(() => {
       this.router.navigate(['/auth/sign-in']);
+      location.reload();
       // Sign-out successful.
     }).catch((error) => {
       // An error happened.
