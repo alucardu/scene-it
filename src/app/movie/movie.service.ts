@@ -5,7 +5,7 @@ import { fireFunctionUrl } from '../../env/dev.env';
 @Injectable({
   providedIn: 'root'
 })
-export class MoviesService {
+export class MovieService {
   private sessionService = inject(SessionService);
 
   getRandomMovieResource = resource({

@@ -1,7 +1,8 @@
-  @if(user.value(); as user) {
+  @if(user(); as user) {
     <button (click)="signOut()">Sign out</button><br>
     {{ user.username }}
 
     <app-session-list/>
+    <app-pending-invites/>
   }
 
