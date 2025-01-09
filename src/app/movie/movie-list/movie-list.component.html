@@ -1,0 +1,16 @@
+<form [formGroup]="movieTitleForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Title</mat-label>
+    <input matInput id="username" type="text" formControlName="movieTitle" placeholder="Enter movie title" />
+  </mat-form-field>
+</form>
+
+<mat-list>
+  {{ movieList.hasValue() }}
+  @for (movie of movieList.value(); track $index) {
+    <mat-list-item>
+      <h4 matLine (click)="selectMovie(movie)">{{ movie.title }}</h4>
+    </mat-list-item>
+  }
+</mat-list>
+
