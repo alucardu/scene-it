@@ -6,7 +6,8 @@
         <mat-card-subtitle>Spooky times</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        id: {{ session.uid }}
+        id: {{ session.uid }}<br/>
+        <span>Status: @if (session.pending_invites?.length === 0) { ready } @else { not ready }</span>
         <p>Number of players: {{ session.users.length }} / {{ session.pending_invites.length + session.users.length }}</p>
       </mat-card-content>
       <mat-card-actions>

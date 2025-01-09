@@ -4,7 +4,7 @@
       <mat-card-title>Players</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <span>{{ session.value()?.movie_title }}</span>
+      <span>{{ session.value()?.movie_title }}</span><br/>
       <mat-list>
         @for (user of sessionUsers.value(); track $index) {
           <mat-list-item>
@@ -12,6 +12,7 @@
           </mat-list-item>
         }
       </mat-list>
+      <span>Status: @if (session.value()?.pending_invites?.length === 0) { ready } @else { not ready }</span>
     </mat-card-content>
   </mat-card>
 }
