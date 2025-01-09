@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { UserService } from '../user.service';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { SessionService } from '../../session/session.service';
+import { SessionInvitesService } from '../../shared/services/session-invites.service';
 
 @Component({
   selector: 'app-pending-invites',
@@ -12,19 +12,18 @@ import { SessionService } from '../../session/session.service';
   imports: [MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatButton, RouterLink]
 })
 export class PendingInvitesComponent {
-  private userService = inject(UserService);
-  sessionService = inject(SessionService);
+  sessionService = inject(SessionService)
+  sessionInvitesService = inject(SessionInvitesService);
 
-  currentUserPendingInvitesResource = this.userService.currentUserPendingInvitesResource;
+  currentUserPendingInvitesResource = this.sessionInvitesService.currentUserPendingInvitesResource;
 
   acceptInvite(uid: string): void {
-    this.userService.acceptedInvite.set(uid);
+    this.sessionInvitesService.acceptedInvite.set(uid);
     this.currentUserPendingInvitesResource.reload();
-    this.sessionService.sessionsResource.reload();
   }
 
   declineInvite(uid: string): void {
-    this.userService.declinedInvite.set(uid);
+    this.sessionInvitesService.declinedInvite.set(uid);
     this.currentUserPendingInvitesResource.reload();
     this.sessionService.sessionsResource.reload();
   }

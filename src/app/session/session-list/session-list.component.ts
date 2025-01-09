@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { UserService } from '../../user/user.service';
+import { SessionInvitesService } from '../../shared/services/session-invites.service';
 
 @Component({
   selector: 'app-session-list',
@@ -15,14 +15,14 @@ import { UserService } from '../../user/user.service';
 })
 
 export class SessionListComponent {
-  private sessionService = inject(SessionService);
   private authService = inject(AuthService);
-  private userService = inject(UserService);
+  private sessionService = inject(SessionService);
+  private sessionInvitesService = inject(SessionInvitesService)
 
   user = this.authService.currentUser;
 
   sessions = this.sessionService.sessionsResource;
-  currentUserPendingInvitesResource = this.userService.currentUserPendingInvitesResource;
+  currentUserPendingInvitesResource = this.sessionInvitesService.currentUserPendingInvitesResource;
 
   deleteSession(uid: string): void {
     this.sessionService.deleteSesion(uid);
