@@ -91,6 +91,9 @@ export class SessionService {
 
   async deleteSesion(uid: string): Promise<void> {
     const session = doc(this.firestore, `sessions/${uid}`);
-    deleteDoc(session).then(() => this.sessionsResource.reload())
+    deleteDoc(session).then(() => this.sessionsResource.reload());
+
+    const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'guesses'), where('session_id', '==', uid)))
+    sessionDocsSnap.docs.map((doc) => deleteDoc(doc.ref));
   }
 }
