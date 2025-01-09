@@ -7,7 +7,7 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-type Config = {
+type MovieSessionConfig = {
   release_date_start: string;
   release_date_end: string;
 }
@@ -31,7 +31,7 @@ export const getRandomMovie = onRequest(
     secrets: ["BEARER_TOKEN"],
     cors: true,
   }, async (request, response) => {
-    const config: Config = JSON.parse(request.body);
+    const config: MovieSessionConfig = JSON.parse(request.body);
     const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&release_date.gte=${config.release_date_start}&release_date.lte=${config.release_date_end}}&sort_by=vote_count.desc&vote_count.gte=2500`;
 
     const data = await fetch(url, options)
@@ -57,7 +57,7 @@ export const getRandomMovie = onRequest(
  * @param {number} randomPage - The random page number to fetch movies from.
  */
 async function selectRandomMovie(
-  config: Config, randomPage: number): Promise<any> {
+  config: MovieSessionConfig, randomPage: number): Promise<any> {
   const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${randomPage}&release_date.gte=${config.release_date_start}&release_date.lte=${config.release_date_end}}&sort_by=vote_count.desc&vote_count.gte=2500`;
 
   const data = await fetch(url, options)
@@ -69,3 +69,43 @@ async function selectRandomMovie(
 
   return data.results[Math.floor(Math.random() * 20 + 1)];
 }
+
+export const getSearchedMovies = onRequest(
+  {
+    secrets: ["BEARER_TOKEN"],
+    cors: true,
+  }, async (request, response) => {
+    const query: string = request.body;
+    const url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1'`;
+
+    const data = await fetch(url, options)
+      .then((res) => res.json())
+      .then((json) => {
+        return json;
+      })
+      .catch((err) => logger.info(err, {structuredData: true}));
+
+    response.send({
+      movies: data,
+    });
+  });
+
+export const getMovieById = onRequest(
+  {
+    secrets: ["BEARER_TOKEN"],
+    cors: true,
+  }, async (request, response) => {
+    const id: string = request.body;
+    const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+
+    const data = await fetch(url, options)
+      .then((res) => res.json())
+      .then((json) => {
+        return json;
+      })
+      .catch((err) => logger.info(err, {structuredData: true}));
+
+    response.send({
+      movie: data,
+    });
+  });

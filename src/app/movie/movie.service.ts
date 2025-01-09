@@ -1,4 +1,4 @@
-import { inject, Injectable, resource } from '@angular/core';
+import { inject, Injectable, resource, signal } from '@angular/core';
 import { SessionService } from '../session/session.service';
 import { fireFunctionUrl } from '../../env/dev.env';
 
@@ -7,6 +7,41 @@ import { fireFunctionUrl } from '../../env/dev.env';
 })
 export class MovieService {
   private sessionService = inject(SessionService);
+
+  movieTitleQuery = signal('');
+  moviesResrouce = resource({
+    request: () => this.movieTitleQuery(),
+    loader: async ({request}) => {
+      if(request.length > 2) {
+        const response = await fetch(`${fireFunctionUrl}/getSearchedMovies`, {
+          method: 'POST',
+          body: JSON.stringify(request),
+        });
+
+        const movies = await response.json();
+        return movies.movies.results
+      } else {
+        this.movieTitleQuery.set('');
+        return null;
+      }
+    }
+  })
+
+  movieGuessId = signal<string | null>(null);
+  movieResource = resource({
+    request: () => this.movieGuessId(),
+    loader: async ({request}) => {
+      if (!request) return null;
+      const args = request
+
+      const response = await fetch(`${fireFunctionUrl}/getMovieById`, {
+        method: 'POST',
+        body: JSON.stringify(args),
+      });
+      
+      return await response.json();
+    }
+  })
 
   getRandomMovieResource = resource({
     request: () => this.sessionService.newSessionResource.value(),

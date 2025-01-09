@@ -12,7 +12,11 @@
           </mat-list-item>
         }
       </mat-list>
-      <span>Status: @if (session.value()?.pending_invites?.length === 0) { ready } @else { not ready }</span>
+      <span>Status: @if (session.value()?.pending_invites?.length === 0) { 
+        ready<br/>
+        <app-guess/>
+      } @else { not ready }</span>
     </mat-card-content>
   </mat-card>
+  <app-guesses/>
 }
