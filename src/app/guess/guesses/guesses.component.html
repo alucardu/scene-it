@@ -6,6 +6,7 @@
     <mat-list>
       <!-- show rounds -->
        <div>
+          show current guess: {{ currentGuessResource.value()?.title }}<br/>
           @for (round of sessionResource.value()?.rounds; track $index) {
             <b>Round {{ $index + 1}}</b>
             @for (guess of round.guess_ids; track $index) {
