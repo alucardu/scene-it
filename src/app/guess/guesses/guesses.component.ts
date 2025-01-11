@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
-import { GuessService } from '../guess.service';
+  import { SessionService } from '../../session/session.service';
 
 @Component({
   selector: 'app-guesses',
@@ -10,7 +10,6 @@ import { GuessService } from '../guess.service';
   imports: [MatListItem, MatCard, MatCardContent, MatCardHeader, MatList, MatCardTitle]
 })
 export class GuessesComponent {
-  private guessService = inject(GuessService);
-  
-  guesses = this.guessService.allGuessesResource;
+  private sessionService = inject(SessionService);
+  sessionResource = this.sessionService.sessionResource;
 }

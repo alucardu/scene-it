@@ -4,11 +4,17 @@
   </mat-card-header>
   <mat-card-content>
     <mat-list>
-      @for (guess of guesses.value(); track $index) {
-        <mat-list-item>
-          {{ guess.username }} guessed: {{ guess.title }}
-        </mat-list-item>
-      }
+      <!-- show rounds -->
+       <div>
+          @for (round of sessionResource.value()?.rounds; track $index) {
+            <b>Round {{ $index + 1}}</b>
+            @for (guess of round.guess_ids; track $index) {
+              <mat-list-item>
+                {{ guess }}
+              </mat-list-item>
+            }
+          }
+       </div>
     </mat-list>
   </mat-card-content>
 </mat-card>
