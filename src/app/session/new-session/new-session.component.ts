@@ -28,7 +28,9 @@ export class NewSessionComponent {
     this.sessionService.createNewSession.set({
       users: [this.user()!.uid],
       pending_invites: [...usersInSession],
-      host_id: this.user()!.uid
+      host_id: this.user()!.uid,
+      rounds: [],
+      current_round: null,
     });
   }
 }

@@ -35,9 +35,9 @@ export class SessionService {
     }
   });
 
-  getCurrentSession = signal<string | null>(null)
+  getCurrentSessionId = signal<string | null>(null)
   sessionResource = rxResource({
-    request: () => this.getCurrentSession(),
+    request: () => this.getCurrentSessionId(),
     loader: ({request}) => {
       if(!request) return of(null);
 
@@ -68,7 +68,12 @@ export class SessionService {
           movie_title: '',
           users: [request.users[0]],
           pending_invites: [...request.pending_invites],
-          host_id: request.users[0]
+          host_id: request.users[0],
+          rounds: [],
+          current_round: {
+            guess_ids: [],
+            user_ids: [],
+          },
         };
 
         const sessionCollectionRef = collection(this.firestore, 'sessions');

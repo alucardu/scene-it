@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MovieListComponent } from '../../movie/movie-list/movie-list.component';
 import { GuessService } from '../guess.service';
 import { SessionService } from '../../session/session.service';
 import { Movie } from '../../shared/types/movie.types';
 import { MovieService } from '../../movie/movie.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-guess',
@@ -12,11 +13,17 @@ import { MovieService } from '../../movie/movie.service';
   imports: [MovieListComponent]
 })
 export class GuessComponent {
+  private authService = inject(AuthService)
   private guessService = inject(GuessService)
   private sessionService = inject(SessionService)
   private movieService = inject(MovieService);
 
+  sessionResource = this.sessionService.sessionResource;
+  userHasGuessed = computed(() => {
+    return this.authService.currentUser() ? this.sessionResource.value()?.current_round?.user_ids.includes(this.authService.currentUser()!.uid) : false;
+  })
+
   createGuess(movie: Movie): void {
-    this.guessService.createGuess(movie, this.sessionService.getCurrentSession()!);
+    this.guessService.createGuess(movie, this.sessionService.sessionResource.value()!);
   }
 }

@@ -17,7 +17,7 @@ export class SessionComponent implements OnInit {
   @Input() uid!: string;
 
   ngOnInit() {
-    this.sessionService.getCurrentSession.set(this.uid);
+    this.sessionService.getCurrentSessionId.set(this.uid);
   }
 
   session = this.sessionService.sessionResource;
