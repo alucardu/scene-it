@@ -66,6 +66,7 @@ export class SessionService {
         const query: Session = {
           uid: this.sessionUid()!,
           movie_title: '',
+          tmdb_id: '',
           users: [request.users[0]],
           pending_invites: [...request.pending_invites],
           host_id: request.users[0],
@@ -89,7 +90,10 @@ export class SessionService {
     loader: async ({request}) => {
       if(request) {
         const sessionDocRef = doc(collection(this.firestore, 'sessions'), this.sessionUid()!)
-        updateDoc(sessionDocRef, { movie_title: request.title }).then(() => this.sessionCreated.set(true));
+        updateDoc(sessionDocRef, {
+          movie_title: request.title,
+          tmdb_id: request.id
+        }).then(() => this.sessionCreated.set(true));
       }
     }
   });

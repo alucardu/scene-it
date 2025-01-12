@@ -1,0 +1,5 @@
+@if(matchResource.hasValue()) {
+  match details: {{ matchResource.value()?.id }}
+  match details: {{ getYearMatch(matchResource.value()?.release_date!) }}
+  match details: {{ matchResource.value()?.title }}
+}

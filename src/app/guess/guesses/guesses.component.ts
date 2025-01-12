@@ -4,12 +4,13 @@ import { MatList, MatListItem } from '@angular/material/list';
   import { SessionService } from '../../session/session.service';
 import { AuthService } from '../../auth/auth.service';
 import { GuessService } from '../guess.service';
+import { MatchComponent } from '../../match/match/match.component';
 
 @Component({
   selector: 'app-guesses',
   templateUrl: './guesses.component.html',
   styleUrls: ['./guesses.component.css'],
-  imports: [MatListItem, MatCard, MatCardContent, MatCardHeader, MatList, MatCardTitle]
+  imports: [MatListItem, MatCard, MatCardContent, MatCardHeader, MatList, MatCardTitle, MatchComponent]
 })
 export class GuessesComponent {
   private authService = inject(AuthService);
@@ -18,4 +19,5 @@ export class GuessesComponent {
 
   sessionResource = this.sessionService.sessionResource;
   currentGuessResource = this.guessService.currentGuessResource;
+  currentUser = this.authService.currentUser;
 }

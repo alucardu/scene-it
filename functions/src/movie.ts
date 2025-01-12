@@ -86,17 +86,26 @@ export const getMovieById = onRequest(
     secrets: ["BEARER_TOKEN"],
     cors: true,
   }, async (request, response) => {
-    const id: string = request.body;
-    const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
-
-    const data = await fetch(url, options)
-      .then((res) => res.json())
-      .then((json) => {
-        return json;
-      })
-      .catch((err) => logger.info(err, {structuredData: true}));
+    const data = await getMovieByIdFn(request.body);
 
     response.send({
       movie: data,
     });
   });
+
+/**
+ * Fetches a random movie from The Movie Database (TMDB) API.
+ *
+ * @param {object} id - The tmdb id
+ */
+export async function getMovieByIdFn(id: string | number): Promise<any> {
+  const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+
+  const data = await fetch(url, options)
+    .then((res) => res.json())
+    .then((json) => {
+      return json;
+    })
+    .catch((err) => logger.info(err, {structuredData: true}));
+  return data;
+}

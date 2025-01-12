@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { MovieListComponent } from '../../movie/movie-list/movie-list.component';
 import { GuessService } from '../guess.service';
 import { SessionService } from '../../session/session.service';
@@ -19,6 +19,7 @@ export class GuessComponent {
   private movieService = inject(MovieService);
 
   sessionResource = this.sessionService.sessionResource;
+
   userHasGuessed = computed(() => {
     return this.authService.currentUser() ? this.sessionResource.value()?.current_round?.user_ids.includes(this.authService.currentUser()!.uid) : false;
   })
