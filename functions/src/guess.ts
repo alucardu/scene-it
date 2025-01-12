@@ -1,4 +1,4 @@
-type Guess = {
+export type Guess = {
   uid: string,
   session_id: string,
   guess_id: string,
@@ -13,7 +13,6 @@ import {onDocumentCreated} from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import admin from "firebase-admin";
 
-admin.initializeApp();
 const db = admin.firestore();
 
 export const createGuess = onDocumentCreated(

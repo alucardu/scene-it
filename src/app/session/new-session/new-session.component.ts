@@ -27,6 +27,8 @@ export class NewSessionComponent {
     const usersInSession = this.userService.allUsersInvitedToSession().map((user) => user.uid);
     this.sessionService.createNewSession.set({
       users: [this.user()!.uid],
+      movie_title: '',
+      tmdb_id: '',
       pending_invites: [...usersInSession],
       host_id: this.user()!.uid,
       rounds: [],

@@ -30,13 +30,14 @@ export class GuessService {
     }
 
     const guessCollectionRef = collection(this.firestore, 'guesses');
-    setDoc(doc(guessCollectionRef), guess).then(() => this.allGuessesResource.reload())
+    setDoc(doc(guessCollectionRef), guess)
   }
 
   currentGuessResource = resource({
     loader: async () => {
       const guessesRef = collection(this.firestore, 'guesses');
       const guess_ids = this.sessionService.sessionResource.value()?.current_round?.guess_ids
+
       const q = query(guessesRef, where('guess_id', 'in', guess_ids));
       const querySnapshot = await getDocs(q);
 

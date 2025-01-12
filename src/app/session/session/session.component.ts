@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { SessionService } from '../session.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
@@ -14,10 +14,10 @@ import { GuessesComponent } from '../../guess/guesses/guesses.component';
 export class SessionComponent implements OnInit {
   private sessionService = inject(SessionService);
 
-  @Input() uid!: string;
+  uid = input.required<string>()
 
   ngOnInit() {
-    this.sessionService.getCurrentSessionId.set(this.uid);
+    this.sessionService.getCurrentSessionId.set(this.uid());
   }
 
   session = this.sessionService.sessionResource;
