@@ -5,13 +5,40 @@ export enum YearDifferenceCategory {
   MoreThan5Years = "MORE_THAN_5_YEARS",
 }
 
-import {onDocumentCreated} from "firebase-functions/v2/firestore";
+import {onDocumentCreated, onDocumentUpdated} from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import {Guess} from "./guess";
 import {getMovieByIdFn} from "./movie";
 import admin from "firebase-admin";
 
 const db = admin.firestore();
+
+export const isSessionCompleted = onDocumentUpdated(
+  {
+    document: "sessions/{sessionId}",
+    secrets: ["BEARER_TOKEN"],
+  },
+  async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) return;
+
+    const docRef = admin.firestore().doc(`sessions/${event.params.sessionId}`);
+
+    const latestDoc = await docRef.get();
+    if (!latestDoc.exists) return;
+
+    const latestData = latestDoc.data();
+    const currentRoundUserIds = latestData?.current_round?.user_ids || [];
+    const currentRoundWinnersIds = latestData?.winners?.user_ids || [];
+
+    if (currentRoundWinnersIds.length > 0 && currentRoundUserIds.length === 0) {
+      const sessionRef = db.collection("sessions").doc(latestData?.uid);
+      await sessionRef.update({
+        "status": "completed",
+      });
+    }
+  }
+);
 
 export const createMatch = onDocumentCreated(
   {
@@ -29,6 +56,8 @@ export const createMatch = onDocumentCreated(
     const sessionRef = db.collection("sessions").doc(guess.session_id);
     const sessionSnapshot = await sessionRef.get();
     const movieSession = await getMovieByIdFn(sessionSnapshot.data()?.tmdb_id);
+
+    checkForWinner(movieGuess.id, movieSession.id, guess);
 
     const keysToCompare = ["id", "title", "release_date"];
     const matchObject: Record<string, any> = {};
@@ -53,6 +82,28 @@ export const createMatch = onDocumentCreated(
     logger.info("## DONE ##", {structuredData: true});
   }
 );
+
+/**
+ * Checks if the provided movie guess ID matches the movie session ID and, if so,
+ * updates the session to record the winner.
+ *
+ * @param {string} movieGuessId - The ID of the guessed movie.
+ * @param {string} movieSessionId - The ID of the movie session.
+ * @param {Guess} guess - The guess object containing session and user details.
+ * @return {Promise<void>} A promise that resolves when the operation is complete.
+ */
+async function checkForWinner(movieGuessId: string, movieSessionId: string, guess: Guess): Promise<void> {
+  const winner = movieGuessId === movieSessionId;
+  const sessionRef = db.collection("sessions").doc(guess.session_id);
+
+  if (winner) {
+    await sessionRef.update({
+      "winners.user_ids": admin.firestore.FieldValue.arrayUnion(guess.uid),
+    });
+  }
+
+  return;
+}
 
 /**
  * Processes a specific key from the session and guessed movie objects.

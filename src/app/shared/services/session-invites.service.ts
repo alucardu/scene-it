@@ -14,7 +14,6 @@ export class SessionInvitesService {
 
   private user = this.authService.currentUser;
 
-
   acceptedInvite = signal<string | null>(null);
   addUserToSession = resource({
     request: () => this.acceptedInvite(),

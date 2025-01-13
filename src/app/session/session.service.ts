@@ -71,6 +71,8 @@ export class SessionService {
           pending_invites: [...request.pending_invites],
           host_id: request.users[0],
           rounds: [],
+          status: "waiting",
+          winners: null,
           current_round: {
             guess_ids: [],
             user_ids: [],
