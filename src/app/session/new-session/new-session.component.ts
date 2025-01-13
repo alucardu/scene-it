@@ -33,6 +33,8 @@ export class NewSessionComponent {
       host_id: this.user()!.uid,
       rounds: [],
       current_round: null,
+      status: "waiting",
+      winners: null,
     });
   }
 }
