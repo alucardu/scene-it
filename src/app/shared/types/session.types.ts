@@ -9,6 +9,7 @@ export type Session = {
   current_round: Round | null;
   status: "waiting" | "playing" | "completed",
   winners: Winners | null;
+  hints: string[],
 };
 
 type Round = {
