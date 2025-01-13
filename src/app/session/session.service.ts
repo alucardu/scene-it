@@ -73,6 +73,7 @@ export class SessionService {
           rounds: [],
           status: "waiting",
           winners: null,
+          hints: [],
           current_round: {
             guess_ids: [],
             user_ids: [],

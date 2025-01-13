@@ -35,6 +35,7 @@ export class NewSessionComponent {
       current_round: null,
       status: "waiting",
       winners: null,
+      hints: []
     });
   }
 }

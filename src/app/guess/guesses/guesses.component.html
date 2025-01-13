@@ -8,6 +8,7 @@
       LENGHT: {{ sessionResource.value()?.current_round?.guess_ids?.length }}
       @for (round of sessionResource.value()?.rounds; track $index) {
         <b>Round {{ $index + 1}}</b>
+        SHOW HINT: {{ sessionResource.value()!.hints[$index]}}
           @for (guess of round.guess_ids; track $index) {
             <mat-list-item>
               @if(round.user_ids[$index] === currentUser()?.uid) {
