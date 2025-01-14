@@ -1,11 +1,13 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>Guesses</mat-card-title>
+    <mat-card-title>Rounds</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <mat-list>
       <mat-list-item>
-        show current guess: {{ currentGuess() }}<br/>
+        @if (currentGuess()) {
+          show current guess: {{ currentGuess() }}<br/>
+        }
       </mat-list-item>
 
       @for (round of sessionResource.value()?.rounds; track $index) {

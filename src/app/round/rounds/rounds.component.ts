@@ -6,12 +6,12 @@ import { AuthService } from '../../auth/auth.service';
 import { MatchComponent } from '../../match/match/match.component';
 
 @Component({
-  selector: 'app-guesses',
-  templateUrl: './guesses.component.html',
-  styleUrls: ['./guesses.component.css'],
+  selector: 'app-rounds',
+  templateUrl: './rounds.component.html',
+  styleUrls: ['./rounds.component.css'],
   imports: [MatListItem, MatCard, MatCardContent, MatCardHeader, MatList, MatCardTitle, MatchComponent]
 })
-export class GuessesComponent {
+export class RoundsComponent {
   private authService = inject(AuthService);
   private sessionService = inject(SessionService);
 

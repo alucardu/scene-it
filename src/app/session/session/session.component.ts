@@ -3,13 +3,13 @@ import { SessionService } from '../session.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { GuessComponent } from '../../guess/guess/guess.component';
-import { GuessesComponent } from '../../guess/guesses/guesses.component';
+import { RoundsComponent } from '../../round/rounds/rounds.component';
 
 @Component({
   selector: 'app-session',
   templateUrl: './session.component.html',
   styleUrls: ['./session.component.css'],
-  imports: [MatCardModule, MatListModule, GuessComponent, GuessesComponent]
+  imports: [MatCardModule, MatListModule, GuessComponent, RoundsComponent]
 })
 export class SessionComponent implements OnInit {
   private sessionService = inject(SessionService);
