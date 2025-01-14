@@ -1,10 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
   import { SessionService } from '../../session/session.service';
 import { AuthService } from '../../auth/auth.service';
 import { MatchComponent } from '../../match/match/match.component';
-import { SessionGuess } from '../../shared/types/session.types';
 
 @Component({
   selector: 'app-guesses',
@@ -18,8 +17,5 @@ export class GuessesComponent {
 
   sessionResource = this.sessionService.sessionResource;
   currentUser = this.authService.currentUser;
-
-  getCurrentGuess(): SessionGuess | undefined {
-    return this.sessionResource.value()?.current_round?.find((guess) => guess.user_id === this.authService.currentUser()?.uid)
-  }
+  currentGuess = signal<string | undefined>((this.sessionResource.value()?.current_round?.find((guess) => guess.user_id === this.authService.currentUser()?.uid)?.movie_title));
 }

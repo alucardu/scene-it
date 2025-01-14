@@ -4,6 +4,5 @@ admin.initializeApp();
 import * as guess from "./guess";
 import * as movie from "./movie";
 import * as match from "./match";
-import * as hint from "./hint";
 
-export {movie, guess, match, hint};
+export {movie, guess, match};
