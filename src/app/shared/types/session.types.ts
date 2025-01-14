@@ -17,6 +17,7 @@ type Winners = {
 }
 
 type Guesses = {
+  hint: string;
   guesses: SessionGuess[]
 }
 
@@ -24,5 +25,6 @@ export type SessionGuess  = {
   guess_id: string;
   user_id: string;
   movie_title: string;
+  username: string;
   session_id: string;
 }
