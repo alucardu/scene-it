@@ -4,24 +4,23 @@
   </mat-card-header>
   <mat-card-content>
     <mat-list>
-      show current guess: {{ currentGuessResource.value()?.title }}<br/>
-      LENGHT: {{ sessionResource.value()?.current_round?.guess_ids?.length }}
+      <mat-list-item>
+        show current guess: {{ getCurrentGuess()?.movie_title }}<br/>
+      </mat-list-item>
+
       @for (round of sessionResource.value()?.rounds; track $index) {
-        <b>Round {{ $index + 1}}</b>
-        SHOW HINT: {{ sessionResource.value()!.hints[$index]}}
-          @for (guess of round.guess_ids; track $index) {
-            <mat-list-item>
-              @if(round.user_ids[$index] === currentUser()?.uid) {
-                <div>
-                  SHOW CURRENT USER GUESS AND MATCHES: {{ guess }}<br/>
-                  TO LOAD GUESS: {{ guess }}
-                  <app-match [guess]="guess"/>
-                </div>
-              } @else {
-                SHOW OTHER PLAYERS GUESSES: {{ guess }}
-              }
-            </mat-list-item>
+        <mat-list-item>
+          HINT {{sessionResource.value()!.hints[$index] }}<br/>
+          ROUND: {{ $index }}<br/>
+          @for (guess of round.guesses; track guess.guess_id) {
+            @if (guess.user_id === currentUser()?.uid) {
+                <!-- show guess -->
+                GUESS: {{ guess.movie_title }}<br/>
+                <!-- show matches -->
+                <app-match [guessId]="guess.guess_id"/>
+            }
           }
+        </mat-list-item>
       }
     </mat-list>
   </mat-card-content>

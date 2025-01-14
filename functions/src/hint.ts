@@ -22,7 +22,7 @@ export const isSessionCompleted = onDocumentUpdated(
     if (!latestDoc.exists) return;
 
     const latestData = latestDoc.data();
-    const currentRoundFinished = latestData?.current_round.user_ids.length === 0;
+    const currentRoundFinished = latestData?.current_round?.length === 0;
     const roundsLength = latestData?.rounds?.length || 0;
     const hintsLength = latestData?.hints?.length || 0;
 
@@ -30,7 +30,6 @@ export const isSessionCompleted = onDocumentUpdated(
       roundsLength > 0 &&
         currentRoundFinished &&
         hintsLength !== roundsLength) {
-      console.log("## ROUND ENDED ##");
       const sessionRef = db.collection("sessions").doc(latestData?.uid);
       const hintsLength = latestData?.hints?.length || 0;
 

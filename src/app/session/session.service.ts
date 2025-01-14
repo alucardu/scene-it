@@ -74,10 +74,7 @@ export class SessionService {
           status: "waiting",
           winners: null,
           hints: [],
-          current_round: {
-            guess_ids: [],
-            user_ids: [],
-          },
+          current_round: []
         };
 
         const sessionCollectionRef = collection(this.firestore, 'sessions');
