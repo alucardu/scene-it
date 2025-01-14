@@ -3,8 +3,8 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/m
 import { MatList, MatListItem } from '@angular/material/list';
   import { SessionService } from '../../session/session.service';
 import { AuthService } from '../../auth/auth.service';
-import { GuessService } from '../guess.service';
 import { MatchComponent } from '../../match/match/match.component';
+import { SessionGuess } from '../../shared/types/session.types';
 
 @Component({
   selector: 'app-guesses',
@@ -15,9 +15,11 @@ import { MatchComponent } from '../../match/match/match.component';
 export class GuessesComponent {
   private authService = inject(AuthService);
   private sessionService = inject(SessionService);
-  private guessService = inject(GuessService)
 
   sessionResource = this.sessionService.sessionResource;
-  currentGuessResource = this.guessService.currentGuessResource;
   currentUser = this.authService.currentUser;
+
+  getCurrentGuess(): SessionGuess | undefined {
+    return this.sessionResource.value()?.current_round?.find((guess) => guess.user_id === this.authService.currentUser()?.uid)
+  }
 }

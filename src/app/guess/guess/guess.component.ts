@@ -21,7 +21,7 @@ export class GuessComponent {
   sessionResource = this.sessionService.sessionResource;
 
   userHasGuessed = computed(() => {
-    return this.authService.currentUser() ? this.sessionResource.value()?.current_round?.user_ids.includes(this.authService.currentUser()!.uid) : false;
+    return this.sessionResource.value()?.current_round?.some((guess) => guess.user_id === this.authService.currentUser()?.uid)
   })
 
   createGuess(movie: Movie): void {

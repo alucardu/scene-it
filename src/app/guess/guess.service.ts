@@ -33,20 +33,6 @@ export class GuessService {
     setDoc(doc(guessCollectionRef), guess)
   }
 
-  currentGuessResource = resource({
-    loader: async () => {
-      const guessesRef = collection(this.firestore, 'guesses');
-      const guess_ids = this.sessionService.sessionResource.value()?.current_round?.guess_ids
-
-      const q = query(guessesRef, where('guess_id', 'in', guess_ids));
-      const querySnapshot = await getDocs(q);
-
-      if(querySnapshot.empty) return null;
-
-      return querySnapshot.docs[0].data().uid === this.authService.currentUser()!.uid ? querySnapshot.docs[0].data() as Guess : null;
-    }
-  });
-
   allGuessesResource = resource({
     request: () => this.sessionService.getCurrentSessionId(),
     loader: async ({request}) => {

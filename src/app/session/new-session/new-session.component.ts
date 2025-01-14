@@ -32,7 +32,7 @@ export class NewSessionComponent {
       pending_invites: [...usersInSession],
       host_id: this.user()!.uid,
       rounds: [],
-      current_round: null,
+      current_round: [],
       status: "waiting",
       winners: null,
       hints: []

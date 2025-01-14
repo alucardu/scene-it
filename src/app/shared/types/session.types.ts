@@ -5,18 +5,24 @@ export type Session = {
   pending_invites: string[];
   users: string[];
   host_id: string;
-  rounds: Round[];
-  current_round: Round | null;
+  rounds: Guesses[];
+  current_round: SessionGuess[];
   status: "waiting" | "playing" | "completed",
   winners: Winners | null;
   hints: string[],
 };
 
-type Round = {
-  guess_ids: string[];
-  user_ids: string[];
-};
-
 type Winners = {
   user_ids: string[];
+}
+
+type Guesses = {
+  guesses: SessionGuess[]
+}
+
+export type SessionGuess  = {
+  guess_id: string;
+  user_id: string;
+  movie_title: string;
+  session_id: string;
 }

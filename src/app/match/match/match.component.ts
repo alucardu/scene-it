@@ -9,13 +9,13 @@ import { Match, YearDifferenceCategory } from '../../shared/types/match.types';
   imports: [],
 })
 export class MatchComponent {
-  guess = input<string>();
+  guessId = input<string>();
 
   private matchService = inject(MatchService);
   matchResource!: ResourceRef<Match | undefined>;
 
   ngOnInit(): void {
-    if (this.guess()) this.matchResource = this.matchService.createMatchResource(this.guess()!);
+    if (this.guessId()) this.matchResource = this.matchService.createMatchResource(this.guessId()!);
   }
 
   getYearMatch(release_date: YearDifferenceCategory): string {
