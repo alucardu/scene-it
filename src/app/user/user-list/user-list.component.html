@@ -1,23 +1,29 @@
 <form [formGroup]="usernameForm">
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" subscriptSizing=dynamic>
     <mat-label>Username</mat-label>
     <input matInput id="username" type="text" formControlName="username" placeholder="Enter username" />
   </mat-form-field>
 </form>
 
-<mat-list>
-  @for (user of userList.value(); track $index) {
-    <mat-list-item>
-      <h4 matLine (click)="addUserToSession(user)">{{ user.username }}</h4>
-    </mat-list-item>
-  }
-</mat-list>
+@if(userList.value()) {
+  <mat-list class="search-results">
+    @for (user of userList.value(); track $index; let last = $last) {
+      <mat-list-item>
+        <h4 matLine (click)="addUserToSession(user)">{{ user.username }}</h4>
+      </mat-list-item>
+    } @empty {
+      <mat-list-item>No results.</mat-list-item>
+    }
+  </mat-list>
+}
 
-<mat-list>
-  Players:
-  @for (user of allUsersForSession(); track $index) {
-    <mat-list-item>
-      {{ user.username }}
-    </mat-list-item>
-  }
-</mat-list>
+@if(allUsersInvitedToSession().length > 0) {
+  <mat-list>
+    Invited players:
+    @for (user of allUsersForSession(); track $index) {
+      <mat-list-item>
+        {{ user.username }}
+      </mat-list-item>
+    }
+  </mat-list>
+}

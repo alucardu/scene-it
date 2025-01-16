@@ -1,8 +1,10 @@
   @if(user(); as user) {
-    <button (click)="signOut()">Sign out</button><br>
-    {{ user.username }}
+    <button mat-button (click)="signOut()">Sign out</button><br>
+    <h1>{{ user.username }}</h1>
 
-    <app-session-list/>
-    <app-pending-invites/>
+    <div class="container">
+      <app-pending-invites/>
+      <app-sessions/>
+    </div>
   }
 

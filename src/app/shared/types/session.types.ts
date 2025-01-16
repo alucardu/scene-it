@@ -1,15 +1,18 @@
+import { User } from "./user.types";
+
 export type Session = {
   uid?: string;
   movie_title: string;
   tmdb_id: string;
-  pending_invites: string[];
-  users: string[];
+  pending_invites: Partial<User>[];
+  users: Partial<User>[];
   host_id: string;
+  host_name: string;
   rounds: Guesses[];
   current_round: SessionGuess[];
   status: "waiting" | "playing" | "completed",
+  current_hint: string | null;
   winners: Winners | null;
-  hints: string[],
 };
 
 type Winners = {

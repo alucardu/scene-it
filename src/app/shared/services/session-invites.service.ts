@@ -20,10 +20,12 @@ export class SessionInvitesService {
     loader: async ({request}) => {
       if(!request) return;
 
+      console.log(request)
+
       const sessionDocRef = doc(collection(this.firestore, 'sessions'), request)
       updateDoc(sessionDocRef, {
-        users: arrayUnion(this.user()?.uid),
-        pending_invites: arrayRemove(this.user()?.uid),
+        users: arrayUnion({ uid: this.user()?.uid, username: this.user()?.username }),
+        pending_invites: arrayRemove({ uid: this.user()?.uid, username: this.user()?.username })
       }).then(() => this.sessionService.sessionsResource.reload());
     }
   });
@@ -36,14 +38,22 @@ export class SessionInvitesService {
 
       const sessionDocRef = doc(collection(this.firestore, 'sessions'), request)
       updateDoc(sessionDocRef, {
-        pending_invites: arrayRemove(this.user()?.uid),
+        pending_invites: arrayRemove({ uid: this.user()?.uid, username: this.user()?.username })
       });
     }
   });
 
   currentUserPendingInvitesResource = resource({
     loader: async () => {
-      const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'sessions'), where('pending_invites', 'array-contains', this.user()!.uid)))
+      const sessionDocsSnap = await getDocs(
+        query(
+          collection(this.firestore, 'sessions'),
+          where('pending_invites', 'array-contains', {
+            uid: this.authService.currentUser()?.uid,
+            username: this.authService.currentUser()?.username
+          })
+        )
+      );
       return sessionDocsSnap.docs.map((doc) => doc.data()) as Session[];
     }
   });

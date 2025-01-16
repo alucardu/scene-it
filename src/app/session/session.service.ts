@@ -30,7 +30,15 @@ export class SessionService {
 
   sessionsResource = resource({
     loader: async () => {
-      const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'sessions'), where('users', 'array-contains', this.authService.currentUser()?.uid)))
+      const sessionDocsSnap = await getDocs(
+        query(
+          collection(this.firestore, 'sessions'),
+          where('users', 'array-contains', {
+            uid: this.authService.currentUser()?.uid,
+            username: this.authService.currentUser()?.username
+          })
+        )
+      );
       return sessionDocsSnap.docs.map((doc) => doc.data());
     }
   });
@@ -46,17 +54,6 @@ export class SessionService {
     }
   });
 
-  sessionUsersResource = resource({
-    request: () => this.sessionResource.value(),
-    loader: async ({request}) => {
-      const userDocsSnap = await getDocs(query(collection(this.firestore, 'users'), where('uid', 'in', request?.users)));
-
-      return userDocsSnap.docs.map((doc) => ({
-        ...doc.data(),
-      })) as User[];
-    }
-  });
-
   createNewSession = signal<Session | null>(null);
   newSessionResource = resource({
     request: () => this.createNewSession(),
@@ -64,17 +61,9 @@ export class SessionService {
       if(request) {
         this.sessionUid.set(nanoid());
         const query: Session = {
-          uid: this.sessionUid()!,
-          movie_title: '',
-          tmdb_id: '',
-          users: [request.users[0]],
+          ...request,
           pending_invites: [...request.pending_invites],
-          host_id: request.users[0],
-          rounds: [],
-          status: "waiting",
-          winners: null,
-          hints: [],
-          current_round: []
+          uid: this.sessionUid()!,
         };
 
         const sessionCollectionRef = collection(this.firestore, 'sessions');

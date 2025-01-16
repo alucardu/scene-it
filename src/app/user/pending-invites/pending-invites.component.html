@@ -6,9 +6,10 @@
       </mat-card-header>
       <mat-card-content>
         <span>
-          <a href="#" [routerLink]="['/session/' + pendingInvite.uid]"> {{ pendingInvite.uid }}</a>
-          <button mat-button (click)="acceptInvite(pendingInvite.uid!)">accept</button>
-          <button mat-button (click)="declineInvite(pendingInvite.uid!)">decline</button>
+          From {{ pendingInvite.host_name }}
+          <a href="#" [routerLink]="['/session/' + pendingInvite.uid]"><button mat-button>Check</button></a>
+          <button mat-button (click)="acceptInvite(pendingInvite.uid!)">Accept</button>
+          <button mat-button (click)="declineInvite(pendingInvite.uid!)">Decline</button>
         </span>
       </mat-card-content>
     </mat-card>

@@ -1,31 +1,31 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Rounds</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item>
-        @if (currentGuess()) {
-          show current guess: {{ currentGuess() }}<br/>
+@for (round of sessionResource.value()?.rounds | reverseArray; track $index; let first = $first) {
+  <mat-card class="card" [class.expanded]="collapse() === $index">
+    <mat-card-header (click)="collapse.set($index)">
+      <mat-card-title><span>ROUND {{ sessionResource.value()?.rounds?.length! - $index }} <mat-icon [class.toggle]="collapse() === $index">chevron_right</mat-icon></span></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if ((round.hint)) {<div>Hint: {{ round.hint }}</div>}
+      @for (guess of round.guesses; track guess.guess_id) {
+        @if (guess.user_id === currentUser()?.uid) {
+          <!-- show round guess -->
+          <div>Your guess: {{ guess.movie_title }}</div>
+          <!-- show round matches -->
+           <div><app-match [guessId]="guess.guess_id"/></div>
         }
-      </mat-list-item>
-
-      @for (round of sessionResource.value()?.rounds; track $index) {
-        <mat-list-item>
-          ROUND: {{ $index + 1}}<br/>
-          HINT {{ round.hint }}<br/>
+      }
+      <div>
+        <span>Other guesses:</span>
+        <mat-list>
           @for (guess of round.guesses; track guess.guess_id) {
-            @if (guess.user_id === currentUser()?.uid) {
-                <!-- show guess -->
-                GUESS: {{ guess.movie_title }}<br/>
-                <!-- show matches -->
-                <app-match [guessId]="guess.guess_id"/><br/>
-            } @else {
-              {{guess.username}} guessed {{ guess.movie_title }}<br/>
+            @if (guess.user_id !== currentUser()?.uid) {
+              <mat-list-item>
+                <!-- opponents guesses -->
+                - {{guess.username}} guessed: {{ guess.movie_title }}<br/>
+              </mat-list-item>
             }
           }
-        </mat-list-item>
-      }
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+        </mat-list>
+      </div>
+    </mat-card-content>
+  </mat-card>
+}

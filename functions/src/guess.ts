@@ -52,21 +52,25 @@ export const createGuess = onDocumentCreated(
       username: guess.username,
     };
 
+    // round not ended
     if (session.current_round?.length !== amountOfUsers) {
       await sessionRef.update({
         "current_round": admin.firestore.FieldValue.arrayUnion(query),
       });
     }
 
+    // round ended
     const updatedSessionRef = db.collection("sessions").doc(guess.session_id);
     const updatedSessionSnapshot = await updatedSessionRef.get();
     if (updatedSessionSnapshot.data()!.current_round.length === amountOfUsers) {
       const currentRound = updatedSessionSnapshot.data()?.current_round;
       const currentRoundsLength = updatedSessionSnapshot.data()?.rounds.length || 0;
+      const currentHint = updatedSessionSnapshot.data()?.current_hint || null;
 
       await sessionRef.update({
+        current_hint: hints[currentRoundsLength],
         rounds: admin.firestore.FieldValue.arrayUnion({
-          hint: hints[currentRoundsLength],
+          hint: currentHint,
           guesses: currentRound,
         }),
         current_round: [],

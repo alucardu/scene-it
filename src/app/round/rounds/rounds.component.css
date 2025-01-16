@@ -1,3 +1,41 @@
 .mat-mdc-list-item {
   height: auto;
 }
+
+div {
+  background: #3f4948;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+mat-card {
+  margin-bottom: 8px;
+}
+
+mat-card-title {
+  margin-bottom: 8px;
+  span {
+    display: flex;
+    align-items: end;
+
+  }
+}
+
+.card {
+  height: 52px;
+
+  &.expanded {
+    height: 100%
+  }
+}
+
+mat-icon {
+  font-size: 16px;
+  font-weight: bold;
+  color: #69a39d;
+  &.toggle {
+    transform: rotate(90deg);
+    transform-origin: middle;
+  }
+}
