@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -22,20 +22,40 @@ export class NewSessionComponent {
 
   sessions = this.sessionService.sessionsResource;
   user = this.authService.currentUser;
+  error = signal(false);
 
-  createNewSession(): void {
-    const usersInSession = this.userService.allUsersInvitedToSession().map((user) => user.uid);
+  userSelected(): void {
+    this.error.set(false)
+  }
+
+  newSession(): void {
+    const usersInSession = this.userService.allUsersInvitedToSession().map((user) => {
+      return {
+        uid: user.uid,
+        username: user.username
+      }
+    });
+
+    if(usersInSession.length === 0) {
+      this.error.set(true);
+      return;
+    }
+
     this.sessionService.createNewSession.set({
-      users: [this.user()!.uid],
+      users: [{
+        uid: this.user()!.uid,
+        username: this.user()?.username
+      }],
       movie_title: '',
       tmdb_id: '',
       pending_invites: [...usersInSession],
       host_id: this.user()!.uid,
+      host_name: this.user()!.username,
       rounds: [],
       current_round: [],
       status: "waiting",
       winners: null,
-      hints: []
+      current_hint: null
     });
   }
 }

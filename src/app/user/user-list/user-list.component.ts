@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { UserService } from '../user.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
@@ -16,9 +16,11 @@ import { User } from '../../shared/types/user.types';
 export class UserListComponent {
   private fb = inject(FormBuilder)
   private userService = inject(UserService);
+  @Output() selectedUser = new EventEmitter<User>()
 
   userList = this.userService.userListResource;
   allUsersForSession = this.userService.allUsersInvitedToSession;
+  allUsersInvitedToSession = this.userService.allUsersInvitedToSession;
 
   public usernameForm: FormGroup = this.fb.group({
     username: ['']
@@ -33,6 +35,7 @@ export class UserListComponent {
   }
 
   addUserToSession(user: User): void {
+    this.selectedUser.emit(user);
     this.userService.inviteUserToSession(user);
     this.userService.usernameQuery.set('');
     this.usernameForm.controls.username.reset();

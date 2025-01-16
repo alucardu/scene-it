@@ -1,0 +1,9 @@
+mat-form-field {
+  width: 100%;
+}
+
+mat-list.search-results {
+  background: #0c0c0c;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}

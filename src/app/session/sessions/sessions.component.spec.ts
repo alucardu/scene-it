@@ -3,21 +3,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { SessionListComponent } from './session-list.component';
+import { SessionsComponent } from './sessions.component';
 
 describe('SessionListComponent', () => {
-  let component: SessionListComponent;
-  let fixture: ComponentFixture<SessionListComponent>;
+  let component: SessionsComponent;
+  let fixture: ComponentFixture<SessionsComponent>;
 
   beforeEach((() => {
     TestBed.configureTestingModule({
-      declarations: [ SessionListComponent ]
+      declarations: [ SessionsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SessionListComponent);
+    fixture = TestBed.createComponent(SessionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
