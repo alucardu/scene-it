@@ -1,7 +1,9 @@
-@if(currentGuess()) {
-  You guessed: {{ currentGuess() }}<br/>
+@if(currentGuessLoading()) {
+  <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+} @else if (currentGuessResource.value()) {
+  You guessed: {{ currentGuessResource.value()?.movie_title }}<br/>
   Waiting for other players...
-} @else {
-  <app-hint/>
-  <app-movie-list (selectedMovie)="createGuess($event)"/>
-}
+  } @else {
+    <app-hint/>
+    <app-movie-list (selectedMovie)="createGuess($event)"/>
+  }

@@ -1,5 +1,5 @@
-import { inject, Injectable, resource } from '@angular/core';
-import { collection, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { inject, Injectable, resource, signal } from '@angular/core';
+import { collection, doc, Firestore, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { Movie } from '../shared/types/movie.types';
 import { SessionService } from '../session/session.service';
@@ -30,7 +30,14 @@ export class GuessService {
     }
 
     const guessCollectionRef = collection(this.firestore, 'guesses');
-    setDoc(doc(guessCollectionRef), guess)
+    setDoc(doc(guessCollectionRef), guess);
+
+    this.currentGuessLoading.set(true)
+    setTimeout(() => {
+      this.currentGuessResource.reload();
+      this.sessionService.sessionResource.reload();
+      this.currentGuessLoading.set(false);
+    }, 2500)
   }
 
   allGuessesResource = resource({
@@ -38,6 +45,22 @@ export class GuessService {
     loader: async ({request}) => {
       const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'guesses'), where('session_id', '==', request)))
       return sessionDocsSnap.docs.map((doc) => doc.data());
+    }
+  })
+
+  currentGuessLoading = signal(false);
+  currentGuessResource = resource({
+    loader: async () => {
+      const sessionDoc = doc(this.firestore, `sessions/${this.sessionService.getCurrentSessionId()!}`);
+      return getDoc(sessionDoc).then((snapshot) => {
+        if (snapshot.exists()) {
+          const session = snapshot.data() as Session;
+          return session.current_round.find(
+            (guess) => guess.user_id === this.authService.currentUser()?.uid
+          );
+        }
+        return undefined; // Document doesn't exist
+      });
     }
   })
 }
