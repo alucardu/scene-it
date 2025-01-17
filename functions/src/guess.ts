@@ -30,7 +30,7 @@ import admin from "firebase-admin";
 const db = admin.firestore();
 
 const hints = [
-  "hint a", "hint b", "hint c",
+  "hint a", "hint b", "hint c", "hint a", "hint b", "hint c", "hint a", "hint b", "hint c", "hint a", "hint b", "hint c", "hint a", "hint b", "hint c", "hint a", "hint b", "hint c",
 ];
 
 export const createGuess = onDocumentCreated(

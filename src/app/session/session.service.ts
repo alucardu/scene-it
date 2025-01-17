@@ -2,10 +2,7 @@ import { effect, inject, Injectable, resource, signal } from '@angular/core';
 import { Session } from '../shared/types/session.types';
 import { nanoid } from 'nanoid';
 import { Movie } from '../shared/types/movie.types';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { collection, deleteDoc, doc, docData, Firestore, getDocs, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
-import { User } from '../shared/types/user.types';
+import { collection, deleteDoc, doc, docData, Firestore, getDoc, getDocs, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
@@ -44,13 +41,19 @@ export class SessionService {
   });
 
   getCurrentSessionId = signal<string | null>(null)
-  sessionResource = rxResource({
+  sessionResource = resource({
     request: () => this.getCurrentSessionId(),
-    loader: ({request}) => {
-      if(!request) return of(null);
+    loader: async ({request}) => {
+      if(!request) null;
 
       const session = doc(this.firestore, `sessions/${request}`);
-      return docData(session) as Observable<Session>;
+
+      return getDoc(session).then((snapshot) => {
+        if (snapshot.exists()) {
+          return snapshot.data() as Session;
+        }
+        return undefined;
+      });
     }
   });
 
