@@ -28,7 +28,7 @@ export const isSessionCompleted = onDocumentUpdated(
     if (!latestDoc.exists) return;
 
     const latestData = latestDoc.data();
-    const currentRoundUserIds = latestData?.current_round?.user_ids || [];
+    const currentRoundUserIds = latestData?.current_round || [];
     const currentRoundWinnersIds = latestData?.winners?.user_ids || [];
 
     if (currentRoundWinnersIds.length > 0 && currentRoundUserIds.length === 0) {
