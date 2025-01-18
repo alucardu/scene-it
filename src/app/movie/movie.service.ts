@@ -3,6 +3,7 @@ import { SessionService } from '../session/session.service';
 import { fireFunctionUrl } from '../../env/dev.env';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Movie } from '../shared/types/movie.types';
+import { SessionConfig } from '../shared/types/session.types';
 
 @Injectable({
   providedIn: 'root'
@@ -46,16 +47,30 @@ export class MovieService {
     }
   })
 
+  sessionConfig = signal<SessionConfig | null>(null);
   getRandomMovieResource = resource({
-    request: () => this.sessionService.newSessionResource.value(),
+    request: () => this.sessionConfig(),
     loader: async ({request}) => {
       if(request) {
+        const today = new Date();
+        const day = today.getDate();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+
+        const release_date_start = request.release_date_start ? `${request.release_date_start}-01-01` : null;
+        const release_date_end = request.release_date_end ? `${request.release_date_end}-${day}-${month}` : null;
+
         const data: any = (await httpsCallable(this.functions, 'movie-getRandomMovie')({
-          release_date_start: '2000-01-01',
-          release_date_end: '2024-01-01',
+          release_date_start,
+          release_date_end,
+          genre: request.genre
         })).data;
 
         const movie: Movie = data.movie
+        if (movie === null) {
+          console.log('session could not be made')
+          return;
+        }
+
         this.sessionService.randomMovie.set(movie);
       }
     }

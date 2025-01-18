@@ -1,0 +1,28 @@
+Movie config:
+<form [formGroup]="sessionConfigForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Start Year</mat-label>
+    <mat-select formControlName="release_date_start">
+      @for (year of years; track $index) {
+        <mat-option [value]="year">{{ year }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>End Year</mat-label>
+    <mat-select formControlName="release_date_end">
+      @for (year of years; track $index) {
+        <mat-option [value]="year">{{ year }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Genre</mat-label>
+    <mat-select formControlName="genre">
+      @for (genre of genres; track $index) {
+        <mat-option [value]="genre.id">{{ genre.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+</form>

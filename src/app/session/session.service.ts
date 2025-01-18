@@ -59,13 +59,13 @@ export class SessionService {
 
   createNewSession = signal<Session | null>(null);
   newSessionResource = resource({
-    request: () => this.createNewSession(),
+    request: () => this.randomMovie(),
     loader: async ({request}) => {
-      if(request) {
+      if(this.createNewSession()) {
         this.sessionUid.set(nanoid());
         const query: Session = {
-          ...request,
-          pending_invites: [...request.pending_invites],
+          ...this.createNewSession()!,
+          pending_invites: [...this.createNewSession()!.pending_invites],
           uid: this.sessionUid()!,
         };
 
@@ -78,13 +78,13 @@ export class SessionService {
 
   randomMovie = signal<Movie | null>(null);
   addMovieToSessionResource = resource({
-    request: () => this.randomMovie(),
+    request: () => this.newSessionResource.value(),
     loader: async ({request}) => {
       if(request) {
         const sessionDocRef = doc(collection(this.firestore, 'sessions'), this.sessionUid()!)
         updateDoc(sessionDocRef, {
-          movie_title: request.title,
-          tmdb_id: request.id
+          movie_title: this.randomMovie()!.title,
+          tmdb_id: this.randomMovie()!.id
         }).then(() => this.sessionCreated.set(true));
       }
     }
