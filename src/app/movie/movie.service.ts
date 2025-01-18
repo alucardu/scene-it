@@ -57,7 +57,16 @@ export class MovieService {
         const month = String(today.getMonth() + 1).padStart(2, '0');
 
         const release_date_start = request.release_date_start ? `${request.release_date_start}-01-01` : null;
-        const release_date_end = request.release_date_end ? `${request.release_date_end}-${day}-${month}` : null;
+
+        let release_date_end = null;
+        if (request.release_date_end) {
+          const endYear = Number(request.release_date_end);
+          if (endYear === today.getFullYear()) {
+            release_date_end = `${endYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          } else {
+            release_date_end = `${endYear}-12-31`;
+          }
+        }
 
         const data: any = (await httpsCallable(this.functions, 'movie-getRandomMovie')({
           release_date_start,

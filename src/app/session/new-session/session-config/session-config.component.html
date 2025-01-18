@@ -14,8 +14,13 @@ Movie config:
       @for (year of years; track $index) {
         <mat-option [value]="year">{{ year }}</mat-option>
       }
+
     </mat-select>
   </mat-form-field>
+  @if(sessionConfigForm.errors?.invalidYearRange) {
+    <mat-error>End year cannot be before start.</mat-error>
+  }
+
   <mat-form-field appearance="fill">
     <mat-label>Genre</mat-label>
     <mat-select formControlName="genre">
