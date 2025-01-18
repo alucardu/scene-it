@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-session-config',
   templateUrl: './session-config.component.html',
   styleUrls: ['./session-config.component.css'],
-  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatOption, MatSelectModule]
+  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatOption, MatSelectModule, MatError]
 })
 export class SessionConfigComponent {
   private fb = inject(FormBuilder);
@@ -102,6 +102,18 @@ export class SessionConfigComponent {
     release_date_start: [null],
     release_date_end: [null],
     genre: [null],
-  });
+  }, { validators: validateYearRange() });
 }
 
+export function validateYearRange(): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    const start = formGroup.get('release_date_start')?.value;
+    const end = formGroup.get('release_date_end')?.value;
+
+    if (start !== null && end !== null && end < start) {
+      return { invalidYearRange: true }; // Return error if end < start
+    }
+
+    return null; // Valid if no error
+  };
+}
