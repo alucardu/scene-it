@@ -13,6 +13,7 @@ export type Session = {
   status: "waiting" | "playing" | "completed",
   current_hint: string | null;
   winners: Winners | null;
+  config: SessionConfig
 };
 
 type Winners = {
@@ -30,4 +31,10 @@ export type SessionGuess  = {
   movie_title: string;
   username: string;
   session_id: string;
+}
+
+export type SessionConfig = {
+  release_date_start?: number | null | undefined,
+  release_date_end?: number | null | undefined,
+  genre?: number | null | undefined,
 }

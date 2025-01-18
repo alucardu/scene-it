@@ -3,9 +3,8 @@
     <mat-card-title>Start a new session</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <p>
-      Session config:
-    </p>
+    <app-session-config/>
+    <span>Invites users:</span>
     <app-user-list (selectedUser)="userSelected()"/>
     @if(error()){<p class="error">Invite at least 1 player.</p>}
   </mat-card-content>

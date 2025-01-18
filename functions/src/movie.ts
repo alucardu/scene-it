@@ -1,6 +1,7 @@
 type MovieSessionConfig = {
   release_date_start: string;
   release_date_end: string;
+  genre: string;
 }
 
 import {onCall, onRequest} from "firebase-functions/v2/https";
@@ -22,8 +23,8 @@ export const getRandomMovie = onCall(
     secrets: ["BEARER_TOKEN"],
     cors: true,
   }, async (request, response) => {
-    const config: MovieSessionConfig = request.data;
-    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&release_date.gte=${config.release_date_start}&release_date.lte=${config.release_date_end}}&sort_by=vote_count.desc&vote_count.gte=2500`;
+    const movieConfig: MovieSessionConfig = request.data;
+    const url = buildUrl(movieConfig);
 
     const data = await fetch(url, options)
       .then((res) => res.json())
@@ -34,7 +35,7 @@ export const getRandomMovie = onCall(
 
     const totalPages: string = data.total_pages;
     const randomPage = Math.floor(Math.random() * parseInt(totalPages)) + 1;
-    const randomMovie = await selectRandomMovie(config, randomPage);
+    const randomMovie = await selectRandomMovie(movieConfig, randomPage);
 
     return {
       movie: randomMovie,
@@ -46,10 +47,28 @@ export const getRandomMovie = onCall(
  *
  * @param {object} config - Configuration for the request.
  * @param {number} randomPage - The random page number to fetch movies from.
+ * @return {Promise<string>} A url used for finding a movie.
+ *
+ */
+function buildUrl(config: MovieSessionConfig, randomPage?: number): string {
+  const primaryReleaseDateGte = config.release_date_start ? `&primary_release_date.gte=${config.release_date_start}` : "";
+  const primaryReleaseDateLte = config.release_date_end ? `&primary_release_date.lte=${config.release_date_end}` : "";
+  const genres = config.genre ? `&with_genres=${config.genre}` : "";
+  const randomPageX = randomPage ?? 1;
+
+  const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${randomPageX}${primaryReleaseDateGte}${primaryReleaseDateLte}&sort_by=vote_average.desc&vote_count.gte=1500${genres}`;
+  return url;
+}
+
+/**
+ * Fetches a random movie from The Movie Database (TMDB) API.
+ *
+ * @param {object} config - Configuration for the request.
+ * @param {number} randomPage - The random page number to fetch movies from.
  */
 async function selectRandomMovie(
   config: MovieSessionConfig, randomPage: number): Promise<any> {
-  const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${randomPage}&release_date.gte=${config.release_date_start}&release_date.lte=${config.release_date_end}}&sort_by=vote_count.desc&vote_count.gte=2500`;
+  const url = buildUrl(config, randomPage);
 
   const data = await fetch(url, options)
     .then((res) => res.json())
@@ -58,7 +77,7 @@ async function selectRandomMovie(
     })
     .catch((err) => logger.info(err, {structuredData: true}));
 
-  return data.results[Math.floor(Math.random() * 20 + 1)];
+  return data.results[Math.floor(Math.random() * data.results.length)];
 }
 
 export const getSearchedMovies = onRequest(

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -7,14 +7,17 @@ import { MovieService } from '../../movie/movie.service';
 import { AuthService } from '../../auth/auth.service';
 import { UserListComponent } from '../../user/user-list/user-list.component';
 import { UserService } from '../../user/user.service';
+import { SessionConfigComponent } from './session-config/session-config.component';
 
 @Component({
   selector: 'app-new-session',
   templateUrl: './new-session.component.html',
   styleUrls: ['./new-session.component.css'],
-  imports: [MatCardModule, MatInputModule, MatButtonModule, UserListComponent]
+  imports: [MatCardModule, MatInputModule, MatButtonModule, UserListComponent, SessionConfigComponent]
 })
 export class NewSessionComponent {
+  @ViewChild(SessionConfigComponent) sessionConfigComponent!: SessionConfigComponent;
+
   private sessionService = inject(SessionService);
   private authService = inject(AuthService);
   private movieService = inject(MovieService)
@@ -29,6 +32,8 @@ export class NewSessionComponent {
   }
 
   newSession(): void {
+    if (this.sessionConfigComponent.sessionConfigForm.invalid) return
+
     const usersInSession = this.userService.allUsersInvitedToSession().map((user) => {
       return {
         uid: user.uid,
@@ -40,6 +45,9 @@ export class NewSessionComponent {
       this.error.set(true);
       return;
     }
+
+    // first get random movie
+    this.movieService.sessionConfig.set(this.sessionConfigComponent.sessionConfigForm.value)
 
     this.sessionService.createNewSession.set({
       users: [{
@@ -55,7 +63,8 @@ export class NewSessionComponent {
       current_round: [],
       status: "waiting",
       winners: null,
-      current_hint: null
+      current_hint: null,
+      config: this.sessionConfigComponent.sessionConfigForm.value,
     });
   }
 }
