@@ -6,10 +6,10 @@
 </form>
 
 @if(userList.value() || userList.status() === 2) {
-  @if(userList.status() === 2) {
-    <mat-progress-spinner mode="indeterminate" diameter="50" />
-  } @else {
-    <mat-list class="search-results">
+  <mat-list class="search-results">
+    @if(userList.status() === 2) {
+      <mat-list-item><mat-progress-spinner mode="indeterminate" diameter="50" /></mat-list-item>
+    } @else {
       @for (user of userList.value(); track $index; let last = $last) {
         <mat-list-item>
           <h4 matLine (click)="addUserToSession(user)">{{ user.username }}</h4>
@@ -17,9 +17,10 @@
       } @empty {
         <mat-list-item>No results.</mat-list-item>
       }
-    </mat-list>
-  }
+    }
+  </mat-list>
 }
+
 
 @if(allUsersInvitedToSession().length > 0) {
   <mat-list>
