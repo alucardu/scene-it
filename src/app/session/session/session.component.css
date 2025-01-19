@@ -3,7 +3,7 @@ mat-card {
 }
 
 .poster {
-  height: 96px;
+  height: 120px;
 }
 
 .blur25 {
@@ -28,4 +28,11 @@ mat-card {
 
 .blur0 {
   filter: blur(2px);
+}
+
+.card_content {
+  display: flex;
+  div {
+    padding-left: 16px;
+  }
 }
