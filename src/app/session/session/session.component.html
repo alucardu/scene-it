@@ -9,6 +9,13 @@
     @if(session.value()?.pending_invites?.length === 0) {
       <mat-card>
         <mat-card-content>
+          <img class="poster"
+            [ngClass]="'blur' + (25 - (session.value()?.rounds?.length || 0) * 5)"
+            [src]="'https://image.tmdb.org/t/p/original/' + session.value()!.poster_path"/>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
           <app-guess/>
         </mat-card-content>
       </mat-card>

@@ -123,12 +123,12 @@ export const getMovieById = onRequest(
   });
 
 /**
- * Fetches a random movie from The Movie Database (TMDB) API.
+ * Fetches a movie from The Movie Database (TMDB) API.
  *
  * @param {object} id - The tmdb id
  */
 export async function getMovieByIdFn(id: string | number): Promise<any> {
-  const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+  const url = `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits&language=en-US`;
 
   const data = await fetch(url, options)
     .then((res) => res.json())
@@ -137,4 +137,47 @@ export async function getMovieByIdFn(id: string | number): Promise<any> {
     })
     .catch((err) => logger.info(err, {structuredData: true}));
   return data;
+}
+
+/**
+ * Get the director name.
+ *
+ * @param {object} crew - Array of crew
+ * @return {string} Director name
+ *
+ */
+export function getDirector(crew: any[]): string {
+  const directorName = crew.find((crew: any) => {
+    if (crew.known_for_department === "Directing" && crew.department === "Directing" && crew.job === "Director") return crew;
+  });
+
+  return directorName.name;
+}
+
+/**
+ * Get a actor name.
+ *
+ * @param {object} cast - Array of crew
+ * @return {string} Actor name
+ */
+export function getActor(cast: any[]): string {
+  const actorName = cast.find((cast: any) => {
+    if (cast.known_for_department === "Acting") return cast;
+  });
+
+  return actorName.name;
+}
+
+/**
+ * Get a actor name.
+ *
+ * @param {object} cast - Array of crew
+ * @return {string} Actor name
+ */
+export function getCharactorName(cast: any[]): string {
+  const actorName = cast.find((cast: any) => {
+    if (cast.known_for_department === "Acting") return cast;
+  });
+
+  return actorName.character;
 }

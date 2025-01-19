@@ -13,6 +13,7 @@ export type Session = {
   status: "waiting" | "playing" | "completed",
   current_hint: string | null;
   winners: Winners | null;
+  poster_path: string;
   config: SessionConfig
 };
 

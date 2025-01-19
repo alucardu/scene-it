@@ -84,7 +84,8 @@ export class SessionService {
         const sessionDocRef = doc(collection(this.firestore, 'sessions'), this.sessionUid()!)
         updateDoc(sessionDocRef, {
           movie_title: this.randomMovie()!.title,
-          tmdb_id: this.randomMovie()!.id
+          tmdb_id: this.randomMovie()!.id,
+          poster_path: this.randomMovie()!.poster_path,
         }).then(() => this.sessionCreated.set(true));
       }
     }

@@ -16,7 +16,10 @@
         @for (movie of movieList.value(); track $index) {
           <mat-list-item (click)="selectMovie(movie)">
             <img matListItemAvatar [src]="'https://image.tmdb.org/t/p/original/' + movie.poster_path"/>
-            <span matListItemLine>{{ movie.title }}</span>
+            <div>
+              <span matListItemLine>{{ movie.title }}</span>
+              <span matListItemLine>{{ movie.release_date }}</span>
+            </div>
           </mat-list-item>
       } @empty {
         <mat-list-item>
