@@ -28,7 +28,7 @@ export class MovieListComponent {
 
   constructor() {
     this.movieTitleForm.controls.movieTitle.valueChanges
-      .pipe(debounceTime(250))
+      .pipe(debounceTime(750))
       .subscribe(value => {
         this.movieService.movieTitleQuery.set(value)
       });

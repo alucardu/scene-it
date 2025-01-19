@@ -1,3 +1,7 @@
+type Movie = {
+  release_date: string;
+}
+
 type MovieSessionConfig = {
   release_date_start: string;
   release_date_end: string;
@@ -94,6 +98,12 @@ export const getSearchedMovies = onRequest(
         return json;
       })
       .catch((err) => logger.info(err, {structuredData: true}));
+
+    data.results = data.results
+      .filter((movie: any) => movie.vote_count > 500)
+      .sort((a: Movie, b: Movie) => {
+        return new Date(b.release_date).getTime() - new Date(a.release_date).getTime();
+      });
 
     response.send({
       movies: data,

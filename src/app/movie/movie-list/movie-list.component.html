@@ -14,8 +14,9 @@
       </mat-list-item>
     } @else {
         @for (movie of movieList.value(); track $index) {
-          <mat-list-item>
-            <h4 matLine (click)="selectMovie(movie)">{{ movie.title }}</h4>
+          <mat-list-item (click)="selectMovie(movie)">
+            <img matListItemAvatar [src]="'https://image.tmdb.org/t/p/original/' + movie.poster_path"/>
+            <span matListItemLine>{{ movie.title }}</span>
           </mat-list-item>
       } @empty {
         <mat-list-item>
