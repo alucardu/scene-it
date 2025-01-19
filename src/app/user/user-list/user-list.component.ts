@@ -6,12 +6,13 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { User } from '../../shared/types/user.types';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css'],
-  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatList, MatListItem, MatInputModule]
+  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatList, MatListItem, MatInputModule, MatProgressSpinner]
 })
 export class UserListComponent {
   private fb = inject(FormBuilder)

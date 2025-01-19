@@ -5,17 +5,22 @@
   </mat-form-field>
 </form>
 
-@if(userList.value()) {
+@if(userList.value() || userList.status() === 2) {
   <mat-list class="search-results">
-    @for (user of userList.value(); track $index; let last = $last) {
-      <mat-list-item>
-        <h4 matLine (click)="addUserToSession(user)">{{ user.username }}</h4>
-      </mat-list-item>
-    } @empty {
-      <mat-list-item>No results.</mat-list-item>
+    @if(userList.status() === 2) {
+      <mat-list-item><mat-progress-spinner mode="indeterminate" diameter="50" /></mat-list-item>
+    } @else {
+      @for (user of userList.value(); track $index; let last = $last) {
+        <mat-list-item>
+          <h4 matLine (click)="addUserToSession(user)">{{ user.username }}</h4>
+        </mat-list-item>
+      } @empty {
+        <mat-list-item>No results.</mat-list-item>
+      }
     }
   </mat-list>
 }
+
 
 @if(allUsersInvitedToSession().length > 0) {
   <mat-list>

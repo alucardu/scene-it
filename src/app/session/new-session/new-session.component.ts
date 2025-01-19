@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, effect, inject, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -8,12 +8,13 @@ import { AuthService } from '../../auth/auth.service';
 import { UserListComponent } from '../../user/user-list/user-list.component';
 import { UserService } from '../../user/user.service';
 import { SessionConfigComponent } from './session-config/session-config.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-new-session',
   templateUrl: './new-session.component.html',
   styleUrls: ['./new-session.component.css'],
-  imports: [MatCardModule, MatInputModule, MatButtonModule, UserListComponent, SessionConfigComponent]
+  imports: [MatCardModule, MatInputModule, MatButtonModule, UserListComponent, SessionConfigComponent, MatProgressSpinnerModule]
 })
 export class NewSessionComponent {
   @ViewChild(SessionConfigComponent) sessionConfigComponent!: SessionConfigComponent;
@@ -24,8 +25,14 @@ export class NewSessionComponent {
   private userService = inject(UserService);
 
   sessions = this.sessionService.sessionsResource;
+  newSessionResource = this.sessionService.newSessionResource;
   user = this.authService.currentUser;
   error = signal(false);
+  loading = signal(false);
+
+  constructor() {
+    effect(() => console.log())
+  }
 
   userSelected(): void {
     this.error.set(false)
