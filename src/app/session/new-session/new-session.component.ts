@@ -71,6 +71,7 @@ export class NewSessionComponent {
       status: "waiting",
       winners: null,
       current_hint: null,
+      poster_path: '',
       config: this.sessionConfigComponent.sessionConfigForm.value,
     });
   }

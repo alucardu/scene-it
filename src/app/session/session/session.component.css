@@ -1,3 +1,31 @@
 mat-card {
   margin-bottom: 8px;
 }
+
+.poster {
+  height: 96px;
+}
+
+.blur25 {
+  filter: blur(25px);
+}
+
+.blur20 {
+  filter: blur(20px);
+}
+
+.blur15 {
+  filter: blur(15px);
+}
+
+.blur10 {
+  filter: blur(10px);
+}
+
+.blur5 {
+  filter: blur(5px);
+}
+
+.blur0 {
+  filter: blur(2px);
+}
