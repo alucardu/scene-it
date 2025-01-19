@@ -6,12 +6,13 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { MovieService } from '../movie.service';
 import { Movie } from '../../shared/types/movie.types';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-movie-list',
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.css'],
-  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatList, MatListItem, MatInputModule]
+  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatList, MatListItem, MatInputModule, MatProgressSpinner]
 
 })
 export class MovieListComponent {

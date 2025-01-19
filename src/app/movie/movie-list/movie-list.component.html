@@ -5,9 +5,12 @@
   </mat-form-field>
 </form>
 
-@if (movieList.value()) {
+
+@if (movieList.value() || movieList.status() ===2) {
   <mat-list class="search-results">
-    @for (movie of movieList.value(); track $index) {
+    @if(movieList.status() ===2) {
+      <mat-progress-spinner mode="indeterminate" diameter="50" />
+      @for (movie of movieList.value(); track $index) {
         <mat-list-item>
           <h4 matLine (click)="selectMovie(movie)">{{ movie.title }}</h4>
         </mat-list-item>
@@ -16,6 +19,7 @@
         No results.
       </mat-list-item>
     }
+  }
   </mat-list>
 }
 
