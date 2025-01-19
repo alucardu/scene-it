@@ -59,7 +59,17 @@ export const createMatch = onDocumentCreated(
 
     checkForWinner(movieGuess.id, movieSession.id, guess);
 
-    const keysToCompare = ["id", "title", "release_date"];
+    const keysToCompare = [
+      "id",
+      "title",
+      "release_date",
+      "genres",
+      "production_companies",
+      "original_language",
+      "runtime",
+      "belongs_to_collection",
+      "budget",
+    ];
     const matchObject: Record<string, any> = {};
 
     keysToCompare.forEach((key) => {
@@ -113,35 +123,43 @@ async function checkForWinner(movieGuessId: string, movieSessionId: string, gues
  * @param {Record<string, any>} movieGuess - The movie object from the user's guess.
  * @return {any | undefined} The result of the comparison, or undefined if no match is found.
  */
-function processKey(key: string, movieSession: Record<string, any>, movieGuess: Record<string, any>): string | number | undefined {
+function processKey(
+  key: string,
+  movieSession: Record<string, any>,
+  movieGuess: Record<string, any>
+): string | number | string[] | undefined | boolean {
   const sessionValue = movieSession[key];
   const guessValue = movieGuess[key];
 
-  if (sessionValue && typeof sessionValue === "number" && guessValue && typeof guessValue === "number") {
-    switch (key) {
-    case "id":
-      return compareId(sessionValue, guessValue);
-    }
+  switch (key) {
+  case "id":
+    return compareId(sessionValue, guessValue);
+  case "title":
+    return compareTitle(sessionValue, guessValue);
+  case "release_date":
+    return compareReleaseDate(sessionValue, guessValue);
+  case "genres":
+    return compareGenres(sessionValue, guessValue);
+  case "production_companies":
+    return compareProductionCompanies(sessionValue, guessValue);
+  case "original_language":
+    return sessionValue === guessValue ? guessValue : undefined;
+  case "runtime":
+    return compareRuntime(sessionValue, guessValue);
+  case "belongs_to_collection":
+    return compareCollection(sessionValue);
+  case "budget":
+    return compareBudget(sessionValue, guessValue);
+  default:
+    return undefined;
   }
-
-  if (sessionValue && typeof sessionValue === "string" && guessValue && typeof guessValue === "string") {
-    switch (key) {
-    case "title":
-      return compareTitle(sessionValue, guessValue);
-    case "release_date":
-      return compareReleaseDate(sessionValue, guessValue);
-    default:
-      return undefined;
-    }
-  }
-  return undefined;
 }
 
 /**
  * Compares the IDs of the session movie and the guessed movie.
- * @param {string} sessionValue - The ID of the movie in the session.
- * @param {string} guessValue - The ID of the guessed movie.
- * @return {string[] | undefined} An array containing the matching ID if they are equal, or undefined if they do not match.
+ * @param {number} sessionValue - The ID of the movie in the session.
+ * @param {number} guessValue - The ID of the guessed movie.
+ * @return {number | undefined} The matching ID if they are equal, or undefined if they do not match.
  */
 function compareId(sessionValue: number, guessValue: number): number | undefined {
   return sessionValue === guessValue ? guessValue : undefined;
@@ -151,7 +169,7 @@ function compareId(sessionValue: number, guessValue: number): number | undefined
  * Compares the titles of the session movie and the guessed movie.
  * @param {string} sessionValue - The title of the movie in the session.
  * @param {string} guessValue - The title of the guessed movie.
- * @return {string[] | undefined} An array containing the matching title if they are equal, or undefined if they do not match.
+ * @return {string | undefined} The matching title if they are equal, or undefined if they do not match.
  */
 function compareTitle(sessionValue: string, guessValue: string): string | undefined {
   return sessionValue === guessValue ? guessValue : undefined;
@@ -162,8 +180,8 @@ function compareTitle(sessionValue: string, guessValue: string): string | undefi
  * Calculates the year difference and categorizes the match accordingly.
  * @param {string} sessionDate - The release date of the movie in the session (in string format).
  * @param {string} guessDate - The release date of the guessed movie (in string format).
- * @return {string[] | undefined} An array containing a category of the year difference
- * ("Same Year", "Within 5 Years", "Within 10 Years", or "More Than 10 Years"), or undefined if dates are invalid.
+ * @return {string | undefined} A category of the year difference
+ * ("Same Year", "Within 1 Year", "Within 5 Years", or "More Than 5 Years"), or undefined if dates are invalid.
  */
 function compareReleaseDate(sessionDate: string, guessDate: string): string | undefined {
   const sessionYear = new Date(sessionDate).getFullYear();
@@ -180,5 +198,97 @@ function compareReleaseDate(sessionDate: string, guessDate: string): string | un
     return YearDifferenceCategory.Within5Years;
   } else {
     return YearDifferenceCategory.MoreThan5Years;
+  }
+}
+
+/**
+ * Compares the genres of the session movie and the guessed movie.
+ * Finds common genres between the two movies.
+ * @param {Array<{id: number, name: string}>} sessionGenres - The genres of the movie in the session.
+ * @param {Array<{id: number, name: string}>} guessGenres - The genres of the guessed movie.
+ * @return {string[] | undefined} An array of matching genre names, or undefined if no matches are found.
+ */
+function compareGenres(
+  sessionGenres: { id: number; name: string }[],
+  guessGenres: { id: number; name: string }[]
+): string[] | undefined {
+  const sessionGenreNames = sessionGenres.map((g) => g.name);
+  const guessGenreNames = guessGenres.map((g) => g.name);
+  const matchingGenres = sessionGenreNames.filter((genre) => guessGenreNames.includes(genre));
+  return matchingGenres.length > 0 ? matchingGenres : undefined;
+}
+
+/**
+ * Compares the production companies of the session movie and the guessed movie.
+ * Finds common production companies between the two movies.
+ * @param {Array<{id: number, name: string}>} sessionCompanies - The production companies of the movie in the session.
+ * @param {Array<{id: number, name: string}>} guessCompanies - The production companies of the guessed movie.
+ * @return {string[] | undefined} An array of matching production company names, or undefined if no matches are found.
+ */
+function compareProductionCompanies(
+  sessionCompanies: { id: number; name: string }[],
+  guessCompanies: { id: number; name: string }[]
+): string[] | undefined {
+  const sessionCompanyNames = sessionCompanies.map((c) => c.name);
+  const guessCompanyNames = guessCompanies.map((c) => c.name);
+  const matchingCompanies = sessionCompanyNames.filter((company) => guessCompanyNames.includes(company));
+  return matchingCompanies.length > 0 ? matchingCompanies : undefined;
+}
+
+/**
+ * Compares the runtime of the session movie and the guessed movie.
+ * Determines if the runtime difference is within a certain range.
+ * @param {number} sessionRuntime - The runtime of the movie in the session (in minutes).
+ * @param {number} guessRuntime - The runtime of the guessed movie (in minutes).
+ * @return {string | undefined} A string describing the match ("Exact Match", "Within 10 minutes"), or undefined if no match is found.
+ */
+function compareRuntime(sessionRuntime: number, guessRuntime: number): string | undefined {
+  const difference = Math.abs(sessionRuntime - guessRuntime);
+  if (difference === 0) {
+    return "Exact Match";
+  } else if (difference <= 10) {
+    return "Within 10 minutes";
+  } else {
+    return undefined;
+  }
+}
+
+/**
+ * Checks if the guessed movie belongs to a collection.
+ * @param {Record<string, any> | null} guessCollection - The collection object of the guessed movie.
+ * @return {boolean | undefined} If movie is part of collection return true, otherwise undefined.
+ */
+function compareCollection(guessCollection: Record<string, any> | null): boolean | undefined {
+  // Check if the guessed movie belongs to a collection
+  if (guessCollection && guessCollection.name) {
+    return true; // Return the name of the collection
+  }
+
+  return undefined;
+}
+
+/**
+ * Compares the budgets of the session movie and the guessed movie.
+ * Provides feedback on whether the budgets are "Exact Match", "Close", or "Far".
+ * @param {number} sessionBudget - The budget of the movie in the session.
+ * @param {number} guessBudget - The budget of the guessed movie.
+ * @return {string | undefined} Feedback on the budget comparison, or undefined if either budget is invalid.
+ */
+function compareBudget(
+  sessionBudget: number | null,
+  guessBudget: number | null
+): string | undefined {
+  if (!sessionBudget || !guessBudget) return undefined;
+
+  const difference = Math.abs(sessionBudget - guessBudget);
+
+  if (difference === 0) {
+    return "Exact Match";
+  } else if (difference <= 10_000_000) {
+    return "Close";
+  } else if (difference <= 50_000_000) {
+    return "Somewhat Close";
+  } else {
+    return "Far";
   }
 }

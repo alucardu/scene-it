@@ -1,5 +1,16 @@
-@if(matchResource.hasValue()) {
-  @if(matchResource.value()?.id) {match details: {{ matchResource.value()?.id }}}
-  @if(matchResource.value()?.release_date) {match details: {{ getYearMatch(matchResource.value()?.release_date!) }}}
-  @if(matchResource.value()?.title) {match details: {{ matchResource.value()?.title }}}
+@if (matchResource.hasValue()) {
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Match Details</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      @for (entry of objectEntries(matchResource.value()!); track $index) {
+        <mat-list-item>
+          <i>{{ entry.key }}: </i> {{ entry.value }}
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>
 }

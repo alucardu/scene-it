@@ -24,6 +24,7 @@ mat-card-title {
 
 .card {
   height: 52px;
+  overflow: hidden;
 
   &.expanded {
     height: 100%
