@@ -71,7 +71,7 @@ export const createMatch = onDocumentCreated(
 
     if (Object.keys(matchObject).length > 0) {
       await admin.firestore().collection("matches").add({
-        session_d: guess.session_id,
+        session_id: guess.session_id,
         guess_id: guess.guess_id,
         movie_id: guess.movie_id,
         matches: matchObject,

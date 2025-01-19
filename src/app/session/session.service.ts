@@ -96,5 +96,8 @@ export class SessionService {
 
     const sessionDocsSnap = await getDocs(query(collection(this.firestore, 'guesses'), where('session_id', '==', uid)))
     sessionDocsSnap.docs.map((doc) => deleteDoc(doc.ref));
+
+    const matchesDocsSnap = await getDocs(query(collection(this.firestore, 'matches'), where('session_id', '==', uid)))
+    matchesDocsSnap.docs.map((doc) => deleteDoc(doc.ref));
   }
 }
