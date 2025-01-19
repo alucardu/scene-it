@@ -1,12 +1,15 @@
 import { Component, inject, input, ResourceRef } from '@angular/core';
 import { MatchService } from '../match.service';
 import { Match, YearDifferenceCategory } from '../../shared/types/match.types';
+import { CommonModule } from '@angular/common';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
 
 @Component({
   selector: 'app-match',
   templateUrl: './match.component.html',
   styleUrls: ['./match.component.css'],
-  imports: [],
+  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatList, MatListItem],
 })
 export class MatchComponent {
   guessId = input<string>();
@@ -18,20 +21,11 @@ export class MatchComponent {
     if (this.guessId()) this.matchResource = this.matchService.createMatchResource(this.guessId()!);
   }
 
-  getYearMatch(release_date: YearDifferenceCategory): string {
-    switch (release_date) {
-      case YearDifferenceCategory.SameYear:
-        return 'same year'
-      case YearDifferenceCategory.Within1Year:
-        return 'within 1 year'
-      case YearDifferenceCategory.Within5Years:
-        return 'within 5 years'
-      case YearDifferenceCategory.MoreThan5Years:
-        return 'more than 5 years'
+  objectEntries(obj: Record<string, any>): { key: string; value: any }[] {
+    return Object.entries(obj).map(([key, value]) => ({ key, value }));
+  }
 
-      default:
-        break;
-    }
-    return release_date;
+  isObject(value: any): boolean {
+    return value && typeof value === 'object' && !Array.isArray(value);
   }
 }
